@@ -1,0 +1,20 @@
+language: cpp
+os: windows
+install:
+- choco install conan
+script:
+- echo 'mkdir build' > build.bat
+- echo 'cd build' >> build.bat
+- echo 'conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan' >> build.bat
+- echo 'conan install -s compiler="Visual Studio" -s compiler.version=15 ..' >> build.bat
+- echo 'cmake .. -G "Visual Studio 15 Win64"' >> build.bat
+- echo 'cmake --build . --config Release' >> build.bat
+- cmd.exe //c "RefreshEnv.cmd & build.bat"
+deploy:
+  provider: releases
+  token:
+    secure: N9743YZdaySRN70UDZoR1NwGSi/Uf0d+ZBPRW165Lx7e6scQLJ+C9b51zSM9A9mSnE0EoUs6l2klGUYFrNLDuR+mIhfeANqDP5bcJ3q4sbSb7RDv7mZvOJrYP0EwsU227jqU4FioSHh0CAAQrgWwbofLdiPEacJlFq2XWEorAMJAU5d7o1l7YdeG5TE71uOrW3CMzC8+uW/8RIYl9BgZRFCt9oMH+Ym/NS7cA/I0kLAE/bF2liVTRmpGywx3fAcjpDbhJawRlxKBcaz82PguvigOo8TfJjAi1qg5ex4rtBerzSRi4XRKysFdahWD5+kVq2tMayHYpiYuEDJSQvPtwzJOou47RvxeIsRH1OQqpvbXv1HUkSbCenUL71fd1PJ5+bVqvji16pbUMHuyH4ztgn3P+ZzYM96OLqziOrz0fmIMkc8gW+rNe4Z1s/T0c8ovMBPNXA1W6TKfqlmkYjbnw3ec4fvrCBWMWzFX++DYpqNozj4SnFCKX0YJYTRYxfFbw7frX4roaS3A26dIDonC9jz+RGKDmgz/qQ1E7VkImgp+fSFeReuiQ/0f4vT7P4UvXBWVtPOuEIl3/ORSJHQIee1KnJ0+yb2RBH4fL6BaJMZ/Nr9Okh47h4uJGJYkclCPWjB+LXESvHkQzDYs1xSqM5/0EuCrs6ENMR2D7kd++nw=
+  file: build/bin/engine.exe
+  skip_cleanup: true
+  on:
+    tags: true
