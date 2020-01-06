@@ -1,0 +1,6 @@
+[submodule "lib/FastNoise"]
+	path = lib/FastNoise
+	url = https://github.com/Auburns/FastNoise.git
+[submodule "lib/color"]
+	path = lib/color
+	url = https://github.com/dmilos/color.git
