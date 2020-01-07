@@ -2,14 +2,16 @@ language: cpp
 os: windows
 install:
 - choco install conan
-script:
-- echo 'mkdir build' > build.bat
-- echo 'cd build' >> build.bat
-- echo 'conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan' >> build.bat
-- echo 'conan install -s compiler="Visual Studio" -s compiler.version=15 ..' >> build.bat
-- echo 'cmake .. -G "Visual Studio 15 Win64"' >> build.bat
-- echo 'cmake --build . --config Release' >> build.bat
-- cmd.exe //c "RefreshEnv.cmd & build.bat"
+script: >
+  echo -e '
+  mkdir build \n
+  cd build \n
+  conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan \n
+  conan install -s compiler="Visual Studio" -s compiler.version=15 .. \n
+  cmake .. -G "Visual Studio 15 Win64" \n
+  cmake --build . --config Release
+  ' > build.bat
+  && cmd.exe //c "RefreshEnv.cmd & build.bat"
 deploy:
   provider: releases
   token:
