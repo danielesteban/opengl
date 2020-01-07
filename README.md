@@ -4,6 +4,8 @@ opengl
 
 > My attempt at a "modern" c++ opengl engine
 
+[![screenshot](https://user-images.githubusercontent.com/806111/71917650-d35ec600-3180-11ea-993d-5abd4aefbc9f.png)](https://github.com/danielesteban/opengl/releases/latest)
+
 ```bash
 # download source
 git clone --recursive https://github.com/danielesteban/opengl.git engine
