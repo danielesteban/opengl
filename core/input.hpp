@@ -30,7 +30,7 @@ class Input {
       bool backwards, downwards, forwards, leftwards, rightwards, upwards;
     } keyboard;
     struct {
-      bool primary, secondary;
+      bool primary, primaryDown, secondary, secondaryDown;
       glm::vec2 position, movement;
     } mouse;
 
@@ -83,9 +83,11 @@ class Input {
         switch (button) {
           case GLFW_MOUSE_BUTTON_1:
             mouse.primary = hasPressed;
+            mouse.primaryDown = hasPressed;
             break;
           case GLFW_MOUSE_BUTTON_2:
             mouse.secondary = hasPressed;
+            mouse.secondaryDown = hasPressed;
             break;
           default:
             break;
@@ -117,7 +119,9 @@ class Input {
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
       isLocked = false;
       mouse.primary = false;
+      mouse.primaryDown = false;
       mouse.secondary = false;
+      mouse.secondaryDown = false;
       keyboard.backwards = false;
       keyboard.downwards = false;
       keyboard.forwards = false;

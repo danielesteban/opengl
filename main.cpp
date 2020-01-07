@@ -7,19 +7,18 @@
 #include "input.hpp"
 #include "testScene.hpp"
 
-const GLint windowSize[2] = { 1280, 720 };
-
 bool needsResize = true;
 void onResize(GLFWwindow* window, int width, int height) {
   needsResize = true;
 }
 
-int main(void) {
+int main() {
   if (!glfwInit()) {
     exit(EXIT_FAILURE);
   }
 
   glfwWindowHint(GLFW_SAMPLES, 4);
+  const GLint windowSize[2] = { 1280, 720 };
   GLFWwindow *window = glfwCreateWindow(windowSize[0], windowSize[1], "C++ is easy  |  dani@gatunes © 2020 ", NULL, NULL);
   if (!window) {
     glfwTerminate();
@@ -28,7 +27,7 @@ int main(void) {
   {
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-    int monitorX, monitorY;
+    GLint monitorX, monitorY;
     glfwGetMonitorPos(monitor, &monitorX, &monitorY);
     glfwSetWindowPos(
       window,
@@ -72,8 +71,8 @@ int main(void) {
   } fps = { 0, 0, 0.0f };
   GLfloat lastFrame = 0.0f;
   while (!glfwWindowShouldClose(window)) {
-    GLfloat time = (GLfloat) glfwGetTime();
-    GLfloat delta = time - lastFrame;
+    const GLfloat time = (GLfloat) glfwGetTime();
+    const GLfloat delta = time - lastFrame;
     lastFrame = time;
     fps.acc++;
     if (time >= fps.lastTick + 1) {
@@ -82,28 +81,21 @@ int main(void) {
       fps.acc = 0;
     }
 
-    camera.animate(&input, time, delta);
-    scene.animate(&camera, &input, time, delta);
+    camera.animate(input, time, delta);
+    scene.animate(camera, input, time, delta);
     input.mouse.movement = glm::vec2(0, 0);
+    input.mouse.primaryDown = false;
+    input.mouse.secondaryDown = false;
 
-    for(
-      std::vector<Shader *>::iterator i = scene.shaders.begin();
-      i != scene.shaders.end();
-      i++
-    ) {
-      (*i)->use();
-      (*i)->updateCamera(&camera);
+    for (auto *shader : scene.shaders) {
+      shader->use();
+      shader->updateCamera(camera);
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLuint inFrustum = 0;
-    for (
-      std::vector<Mesh *>::iterator i = scene.meshes.begin();
-      i != scene.meshes.end();
-      i++
-    ) {
-      Mesh *mesh = (*i);
+    for (auto *mesh : scene.meshes) {
       if (camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
         mesh->render();
         inFrustum++;

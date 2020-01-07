@@ -51,23 +51,23 @@ void Shader::use() {
   glUseProgram(program);
 }
 
-void Shader::updateAlbedo(const GLfloat *color) {
+void Shader::updateAlbedo(const glm::vec3 &color) {
   if (uniforms.albedo != -1) {
-    glUniform3fv(uniforms.albedo, 1, color);
+    glUniform3fv(uniforms.albedo, 1, glm::value_ptr(color));
   }
 }
 
-void Shader::updateCamera(const Camera *camera) {
+void Shader::updateCamera(const Camera &camera) {
   if (uniforms.projection != -1) {
-    glUniformMatrix4fv(uniforms.projection, 1, GL_FALSE, glm::value_ptr(camera->projection));
+    glUniformMatrix4fv(uniforms.projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
   }
   if (uniforms.view != -1) {
-    glUniformMatrix4fv(uniforms.view, 1, GL_FALSE, glm::value_ptr(camera->view));
+    glUniformMatrix4fv(uniforms.view, 1, GL_FALSE, glm::value_ptr(camera.view));
   }
 }
 
-void Shader::updateModel(const GLfloat *matrix) {
+void Shader::updateModel(const glm::mat4 &matrix) {
   if (uniforms.model != -1) {
-    glUniformMatrix4fv(uniforms.model, 1, GL_FALSE, matrix);
+    glUniformMatrix4fv(uniforms.model, 1, GL_FALSE, glm::value_ptr(matrix));
   }
 }

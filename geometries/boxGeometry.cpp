@@ -65,6 +65,6 @@ BoxGeometry::BoxGeometry(const GLfloat width, const GLfloat height, const GLfloa
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) (sizeof(GLfloat) * 3));
   glBindVertexArray(0);
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
 }

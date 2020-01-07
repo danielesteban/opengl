@@ -10,7 +10,7 @@
 
 class Scene {
   public:
-    virtual void animate(Camera *camera, Input *input, GLfloat time, GLfloat delta) = 0;
+    virtual void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) = 0;
     std::vector<Mesh *> meshes;
     std::vector<Shader *> shaders;
 };

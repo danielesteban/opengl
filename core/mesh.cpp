@@ -1,21 +1,20 @@
 #include "mesh.hpp"
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 Mesh::Mesh(Geometry *geometry, Shader *shader) :
-  albedo({ 1.0f, 1.0f, 1.0f }),
+  albedo(1.0f, 1.0f, 1.0f),
   geometry(geometry),
   shader(shader),
-  scale({ 1.0f, 1.0f, 1.0f })
+  scale(1.0f, 1.0f, 1.0f)
 {
   updateTransform();
 }
 
 void Mesh::render() {
   shader->use();
-  shader->updateAlbedo(glm::value_ptr(albedo));
-  shader->updateModel(glm::value_ptr(transform));
+  shader->updateAlbedo(albedo);
+  shader->updateModel(transform);
   geometry->draw();
 }
 

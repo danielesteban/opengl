@@ -10,7 +10,7 @@
 class TestScene : public Scene {
   public:
     TestScene();
-    void animate(Camera *camera, Input *input, GLfloat time, GLfloat delta);
+    void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta);
   private:
     BasicShader basicShader;
     GridShader gridShader;

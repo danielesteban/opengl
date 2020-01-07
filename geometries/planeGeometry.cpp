@@ -27,5 +27,5 @@ PlaneGeometry::PlaneGeometry(const GLfloat width, const GLfloat height) {
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) 0);
   glBindVertexArray(0);
-	glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(0);
 }
