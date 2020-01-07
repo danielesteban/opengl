@@ -15,7 +15,7 @@ PlaneGeometry::PlaneGeometry(const GLfloat width, const GLfloat height) {
     0, 1, 2,
     2, 3, 0
   };
-  const GLfloat side = fmax(width, height);
+  const GLfloat side = fmax(hw, hh);
   count = sizeof(indices) / sizeof(GLushort);
   origin = glm::vec3(0.0f, 0.0f, 0.0f);
   radius = sqrt(side * side + side * side);

@@ -51,7 +51,7 @@ BoxGeometry::BoxGeometry(const GLfloat width, const GLfloat height, const GLfloa
     20, 21, 22,
     22, 23, 20
   };
-  const GLfloat side = fmax(width, fmax(height, length));
+  const GLfloat side = fmax(hw, fmax(hh, hl));
   count = sizeof(indices) / sizeof(GLushort);
   origin = glm::vec3(0.0f, 0.0f, 0.0f);
   radius = sqrt(side * side + side * side);
