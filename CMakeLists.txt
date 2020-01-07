@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(Engine)
 
-add_definitions("-std=c++11")
+add_definitions("-std=c++11 -DIMGUI_IMPL_OPENGL_LOADER_GLAD")
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()

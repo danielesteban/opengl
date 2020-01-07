@@ -17,6 +17,8 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_SAMPLES, 4);
   const GLint windowSize[2] = { 1280, 720 };
   GLFWwindow *window = glfwCreateWindow(windowSize[0], windowSize[1], "C++ is easy  |  dani@gatunes © 2020 ", NULL, NULL);
