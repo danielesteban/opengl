@@ -4,7 +4,7 @@ opengl
 
 > My attempt at a "modern" c++ opengl engine
 
-[![screenshot](https://user-images.githubusercontent.com/806111/71917650-d35ec600-3180-11ea-993d-5abd4aefbc9f.png)](https://github.com/danielesteban/opengl/releases/latest)
+[![screenshot](https://user-images.githubusercontent.com/806111/72124454-19747f00-3365-11ea-80c8-57cc2ecf539b.png)](https://github.com/danielesteban/opengl/releases/latest)
 
 ```bash
 # download source
