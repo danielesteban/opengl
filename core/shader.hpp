@@ -8,6 +8,7 @@
 class Shader {
   public:
     Shader(const char *vertexSource, const char *fragmentSource);
+    ~Shader();
     void use();
     void updateAlbedo(const glm::vec3 &color);
     void updateCamera(const Camera &camera);

@@ -6,6 +6,12 @@ Geometry::Geometry() {
   glGenBuffers(1, &vbo);
 }
 
+Geometry::~Geometry() {
+  glDeleteBuffers(1, &ebo);
+  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(1, &vbo);
+}
+
 void Geometry::draw() {
   glBindVertexArray(vao);
   glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);

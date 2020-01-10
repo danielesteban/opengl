@@ -47,6 +47,12 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   uniforms.view = glGetUniformLocation(program, "view");
 }
 
+Shader::~Shader() {
+  glDeleteProgram(program);
+  glDeleteShader(fragmentShader);
+  glDeleteShader(vertexShader);
+}
+
 void Shader::use() {
   glUseProgram(program);
 }

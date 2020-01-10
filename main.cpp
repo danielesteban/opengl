@@ -6,6 +6,7 @@
 #include "camera.hpp"
 #include "input.hpp"
 #include "testScene.hpp"
+#include "voxelsScene.hpp"
 
 bool needsResize = true;
 void onResize(GLFWwindow* window, int width, int height) {
@@ -65,7 +66,18 @@ int main() {
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   Camera camera;
-  TestScene scene;
+  Scene *scene = (Scene *) new TestScene();
+
+  bool isVoxels = false;
+  auto swapScene = [&isVoxels, &scene]() {
+    delete scene;
+    if (isVoxels) {
+      scene = (Scene *) new TestScene();
+    } else {
+      scene = (Scene *) new VoxelsScene();
+    }
+    isVoxels = !isVoxels;
+  };
 
   struct {
     GLuint acc, lastCount;
@@ -84,12 +96,15 @@ int main() {
     }
 
     camera.animate(input, time, delta);
-    scene.animate(camera, input, time, delta);
+    scene->animate(camera, input, time, delta);
+    if (input.mouse.secondaryDown) {
+      swapScene();
+    }
     input.mouse.movement = glm::vec2(0, 0);
     input.mouse.primaryDown = false;
     input.mouse.secondaryDown = false;
 
-    for (auto *shader : scene.shaders) {
+    for (auto *shader : scene->shaders) {
       shader->use();
       shader->updateCamera(camera);
     }
@@ -97,7 +112,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLuint inFrustum = 0;
-    for (auto *mesh : scene.meshes) {
+    for (auto *mesh : scene->meshes) {
       if (camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
         mesh->render();
         inFrustum++;
@@ -111,9 +126,9 @@ int main() {
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 110.0f, 10.0f), 0);
     ImGui::SetNextWindowSize(ImVec2(100.0f, 0.0f), 0);
     ImGui::Begin("Debug");
-    ImGui::Text("%d Meshes", scene.meshes.size());
+    ImGui::Text("%d Meshes", scene->meshes.size());
     ImGui::Text("%d Frustum", inFrustum);
-    ImGui::Text("%d Shaders", scene.shaders.size());
+    ImGui::Text("%d Shaders", scene->shaders.size());
     ImGui::Text("%d FPS", fps.lastCount);
     ImGui::End();
 

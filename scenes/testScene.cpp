@@ -1,23 +1,35 @@
 #include "testScene.hpp"
-#include <color.hpp>
+#include "color.hpp"
 
-TestScene::TestScene() :
-  box(1.0f, 1.0f, 1.0f),
-  plane(1000.0f, 1000.0f)
-{
-  shaders.push_back(&gridShader);
-  shaders.push_back(&basicShader);
+#include "basicShader.hpp"
+#include "gridShader.hpp"
 
-  Mesh *floor = new Mesh(&plane, &gridShader);
-  floor->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0, 0));
-  floor->updateTransform();
-  meshes.push_back(floor);
+#include "boxGeometry.hpp"
+#include "planeGeometry.hpp"
+
+
+TestScene::TestScene() {
+  BasicShader *basicShader = new BasicShader();
+  shaders.push_back(basicShader);
+  GridShader *gridShader = new GridShader();
+  shaders.push_back(gridShader);
+
+  {
+    Geometry *geometry = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
+    geometries.push_back(geometry);
+    Mesh *mesh = new Mesh(geometry, gridShader);
+    mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0, 0));
+    mesh->updateTransform();
+    meshes.push_back(mesh);
+  }
 
   noise.SetNoiseType(FastNoise::SimplexFractal);
 
+  Geometry *box = (Geometry *) new BoxGeometry(1.0f, 1.0f, 1.0f);
+  geometries.push_back(box);
   for (int z = 0; z < 100; z += 1) {
     for (int x = 0; x < 100; x += 1) {
-      Mesh *cube = new Mesh(&box, &basicShader);
+      Mesh *cube = new Mesh(box, basicShader);
       cube->position.x = (GLfloat) (x - 50) * 1.5f;
       cube->position.z = (GLfloat) (z - 50) * 1.5f;
       cubes.push_back(cube);

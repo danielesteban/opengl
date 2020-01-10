@@ -7,11 +7,12 @@
 class Geometry {
   public:
     Geometry();
+    ~Geometry();
+    GLuint count;
     glm::vec3 origin;
     GLfloat radius;
     void draw();
   protected:
-    GLuint count;
     GLuint ebo;
     GLuint vao;
     GLuint vbo;
