@@ -1,14 +1,14 @@
 #include "voxelsGeometry.hpp"
 
-const GLfloat VoxelsGeometry::ao(bool n[]) {
+const GLfloat VoxelsGeometry::ao(const bool n1, const bool n2, const bool n3) {
   GLfloat light = 1.0f;
-  if (n[0]) {
+  if (n1) {
     light -= 0.2f;
   }
-  if (n[1]) {
+  if (n2) {
     light -= 0.2f;
   }
-  if ((n[0] && n[1]) || n[2]) {
+  if ((n1 && n2) || n3) {
     light -= 0.2f;
   }
   return light;
@@ -23,30 +23,24 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
 
   struct {
     GLint x, y, z;
-    bool n[3];
+    GLfloat light;
   } points[4];
+  const glm::vec2 uv[4] = {
+    {0.0f, 0.0f},
+    {1.0f, 0.0f},
+    {1.0f, 1.0f},
+    {0.0f, 1.0f},
+  };
 
   GLushort o = 0;
-  auto pushFace = [&vertices, &indices, &points, &o](const GLubyte type, const glm::vec3 &color) {
-    const GLfloat light[4] = {
-      ao(points[0].n),
-      ao(points[1].n),
-      ao(points[2].n),
-      ao(points[3].n)
-    };
-    const glm::vec2 uv[4] = {
-      {(GLfloat) type, 0.0f},
-      {(GLfloat) type + 1.0f, 0.0f},
-      {(GLfloat) type + 1.0f, 1.0f},
-      {(GLfloat) type, 1.0f}
-    };
-    const GLint v = (light[0] + light[2] < light[1] + light[3]) ? 1 : 0;
+  auto pushFace = [&vertices, &indices, &points, &uv, &o](const GLubyte type, const glm::vec3 &color) {
+    const GLint v = (points[0].light + points[2].light < points[1].light + points[3].light) ? 1 : 0;
     for (GLint p = 0; p < 4; p += 1) {
       GLint i = (v + p) % 4;
       vertices.push_back({
         (GLfloat) points[i].x, (GLfloat) points[i].y, (GLfloat) points[i].z,
-        color.x * light[i], color.y * light[i], color.z * light[i],
-        uv[i].x, uv[i].y
+        color.x * points[i].light, color.y * points[i].light, color.z * points[i].light,
+        uv[i].x + (GLfloat) type, uv[i].y
       });
     }
     indices.push_back(o);
@@ -75,10 +69,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool e = chunks->test(vx + 1, vy + 1, vz);
             const bool w = chunks->test(vx - 1, vy + 1, vz);
             const bool s = chunks->test(vx, vy + 1, vz + 1);
-            points[0] = {x, y + 1, z + 1,         w, s, chunks->test(vx - 1, vy + 1, vz + 1)};
-            points[1] = {x + 1, y + 1, z + 1,     e, s, chunks->test(vx + 1, vy + 1, vz + 1)};
-            points[2] = {x + 1, y + 1, z,         e, n, chunks->test(vx + 1, vy + 1, vz - 1)};
-            points[3] = {x, y + 1, z,             w, n, chunks->test(vx - 1, vy + 1, vz - 1)};
+            points[0] = {x, y + 1, z + 1,       ao(w, s, chunks->test(vx - 1, vy + 1, vz + 1))};
+            points[1] = {x + 1, y + 1, z + 1,   ao(e, s, chunks->test(vx + 1, vy + 1, vz + 1))};
+            points[2] = {x + 1, y + 1, z,       ao(e, n, chunks->test(vx + 1, vy + 1, vz - 1))};
+            points[3] = {x, y + 1, z,           ao(w, n, chunks->test(vx - 1, vy + 1, vz - 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
           // BOTTOM
@@ -87,10 +81,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool e = chunks->test(vx + 1, vy - 1, vz);
             const bool w = chunks->test(vx - 1, vy - 1, vz);
             const bool s = chunks->test(vx, vy - 1, vz + 1);
-            points[0] = {x, y, z,                 w, n, chunks->test(vx - 1, vy - 1, vz - 1)};
-            points[1] = {x + 1, y, z,             e, n, chunks->test(vx + 1, vy - 1, vz - 1)};
-            points[2] = {x + 1, y, z + 1,         e, s, chunks->test(vx + 1, vy - 1, vz + 1)};
-            points[3] = {x, y, z + 1,             w, s, chunks->test(vx - 1, vy - 1, vz + 1)};
+            points[0] = {x, y, z,               ao(w, n, chunks->test(vx - 1, vy - 1, vz - 1))};
+            points[1] = {x + 1, y, z,           ao(e, n, chunks->test(vx + 1, vy - 1, vz - 1))};
+            points[2] = {x + 1, y, z + 1,       ao(e, s, chunks->test(vx + 1, vy - 1, vz + 1))};
+            points[3] = {x, y, z + 1,           ao(w, s, chunks->test(vx - 1, vy - 1, vz + 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
           // SOUTH
@@ -99,10 +93,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool w = chunks->test(vx - 1, vy, vz + 1);
             const bool t = chunks->test(vx, vy + 1, vz + 1);
             const bool b = chunks->test(vx, vy - 1, vz + 1);
-            points[0] = {x, y, z + 1,             w, b, chunks->test(vx - 1, vy - 1, vz + 1)};
-            points[1] = {x + 1, y, z + 1,         e, b, chunks->test(vx + 1, vy - 1, vz + 1)};
-            points[2] = {x + 1, y + 1, z + 1,     e, t, chunks->test(vx + 1, vy + 1, vz + 1)};
-            points[3] = {x, y + 1, z + 1,         w, t, chunks->test(vx - 1, vy + 1, vz + 1)};
+            points[0] = {x, y, z + 1,           ao(w, b, chunks->test(vx - 1, vy - 1, vz + 1))};
+            points[1] = {x + 1, y, z + 1,       ao(e, b, chunks->test(vx + 1, vy - 1, vz + 1))};
+            points[2] = {x + 1, y + 1, z + 1,   ao(e, t, chunks->test(vx + 1, vy + 1, vz + 1))};
+            points[3] = {x, y + 1, z + 1,       ao(w, t, chunks->test(vx - 1, vy + 1, vz + 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
           // NORTH
@@ -111,10 +105,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool w = chunks->test(vx - 1, vy, vz - 1);
             const bool t = chunks->test(vx, vy + 1, vz - 1);
             const bool b = chunks->test(vx, vy - 1, vz - 1);
-            points[0] = {x + 1, y, z,             e, b, chunks->test(vx + 1, vy - 1, vz - 1)};
-            points[1] = {x, y, z,                 w, b, chunks->test(vx - 1, vy - 1, vz - 1)};
-            points[2] = {x, y + 1, z,             w, t, chunks->test(vx - 1, vy + 1, vz - 1)};
-            points[3] = {x + 1, y + 1, z,         e, t, chunks->test(vx + 1, vy + 1, vz - 1)};
+            points[0] = {x + 1, y, z,           ao(e, b, chunks->test(vx + 1, vy - 1, vz - 1))};
+            points[1] = {x, y, z,               ao(w, b, chunks->test(vx - 1, vy - 1, vz - 1))};
+            points[2] = {x, y + 1, z,           ao(w, t, chunks->test(vx - 1, vy + 1, vz - 1))};
+            points[3] = {x + 1, y + 1, z,       ao(e, t, chunks->test(vx + 1, vy + 1, vz - 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
           // WEST
@@ -123,10 +117,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool s = chunks->test(vx + 1, vy, vz + 1);
             const bool t = chunks->test(vx + 1, vy + 1, vz);
             const bool b = chunks->test(vx + 1, vy - 1, vz);
-            points[0] = {x + 1, y, z + 1,         s, b, chunks->test(vx + 1, vy - 1, vz + 1)};
-            points[1] = {x + 1, y, z,             n, b, chunks->test(vx + 1, vy - 1, vz - 1)};
-            points[2] = {x + 1, y + 1, z,         n, t, chunks->test(vx + 1, vy + 1, vz - 1)};
-            points[3] = {x + 1, y + 1, z + 1,     s, t, chunks->test(vx + 1, vy + 1, vz + 1)};
+            points[0] = {x + 1, y, z + 1,       ao(s, b, chunks->test(vx + 1, vy - 1, vz + 1))};
+            points[1] = {x + 1, y, z,           ao(n, b, chunks->test(vx + 1, vy - 1, vz - 1))};
+            points[2] = {x + 1, y + 1, z,       ao(n, t, chunks->test(vx + 1, vy + 1, vz - 1))};
+            points[3] = {x + 1, y + 1, z + 1,   ao(s, t, chunks->test(vx + 1, vy + 1, vz + 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
           // EAST
@@ -135,10 +129,10 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
             const bool s = chunks->test(vx - 1, vy, vz + 1);
             const bool t = chunks->test(vx - 1, vy + 1, vz);
             const bool b = chunks->test(vx - 1, vy - 1, vz);
-            points[0] = {x, y, z,                 n, b, chunks->test(vx - 1, vy - 1, vz - 1)};
-            points[1] = {x, y, z + 1,             s, b, chunks->test(vx - 1, vy - 1, vz + 1)};
-            points[2] = {x, y + 1, z + 1,         s, t, chunks->test(vx - 1, vy + 1, vz + 1)};
-            points[3] = {x, y + 1, z,             n, t, chunks->test(vx - 1, vy + 1, vz - 1)};
+            points[0] = {x, y, z,               ao(n, b, chunks->test(vx - 1, vy - 1, vz - 1))};
+            points[1] = {x, y, z + 1,           ao(s, b, chunks->test(vx - 1, vy - 1, vz + 1))};
+            points[2] = {x, y + 1, z + 1,       ao(s, t, chunks->test(vx - 1, vy + 1, vz + 1))};
+            points[3] = {x, y + 1, z,           ao(n, t, chunks->test(vx - 1, vy + 1, vz - 1))};
             pushFace(voxel->type - 1, voxel->color);
           }
         }
