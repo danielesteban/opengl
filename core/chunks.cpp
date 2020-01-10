@@ -64,7 +64,7 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
 
   for (GLint z = 0; z < ChunkSize; z++) {
     for (GLint x = 0; x < ChunkSize; x++) {
-      const GLfloat height = (GLfloat) chunk->heightmap[z * ChunkSize + x];
+      const GLubyte height = chunk->heightmap[z * ChunkSize + x];
       for (GLint y = 0; y < ChunkSize * NumSubchunks; y++) {
         const GLint i = (z * ChunkSize * ChunkSize * NumSubchunks) + (y * ChunkSize) + x;
         if (
