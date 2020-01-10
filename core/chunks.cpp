@@ -50,9 +50,8 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
 
   const GLint vx = cx * ChunkSize;
   const GLint vz = cz * ChunkSize;
-  for (GLint z = 0; z < ChunkSize; z++) {
-    for (GLint x = 0; x < ChunkSize; x++) {
-      const GLint i = z * ChunkSize + x;
+  for (GLint i = 0, z = 0; z < ChunkSize; z++) {
+    for (GLint x = 0; x < ChunkSize; x++, i++) {
       chunk->heightmap[i] = (GLubyte) (
         abs(noise.GetNoise(
           (GLfloat) (vx + x) / 1.5f,
@@ -62,15 +61,13 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
     }
   }
 
-  for (GLint z = 0; z < ChunkSize; z++) {
-    for (GLint x = 0; x < ChunkSize; x++) {
-      const GLubyte height = chunk->heightmap[z * ChunkSize + x];
-      for (GLint y = 0; y < ChunkSize * NumSubchunks; y++) {
-        const GLint i = (z * ChunkSize * ChunkSize * NumSubchunks) + (y * ChunkSize) + x;
+  for (GLint i = 0, z = 0; z < ChunkSize; z++) {
+    for (GLint y = 0; y < ChunkSize * NumSubchunks; y++) {
+      for (GLint x = 0; x < ChunkSize; x++, i++) {
         if (
           y == 0
           || (
-            y <= height
+            y <= chunk->heightmap[z * ChunkSize + x]
             && noise.GetNoise(
               (GLfloat) (vz + z),
               (GLfloat) y * 0.5f,
@@ -88,9 +85,6 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
           hsv[2] = (GLfloat) (rand() % 60 + 20);
           rgb = hsv;
           chunk->voxels[i].color = glm::vec3(rgb[0], rgb[1], rgb[2]);
-        } else {
-          chunk->voxels[i].type = 0;
-          chunk->voxels[i].color = glm::vec3(0.0f, 0.0f, 0.0f);
         }
       }
     }
