@@ -27,7 +27,7 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, con
   } points[4];
 
   GLushort o = 0;
-  auto pushFace = [&vertices, &indices, &points, &o](const GLbyte type, const glm::vec3 &color) {
+  auto pushFace = [&vertices, &indices, &points, &o](const GLubyte type, const glm::vec3 &color) {
     const GLfloat light[4] = {
       ao(points[0].n),
       ao(points[1].n),
