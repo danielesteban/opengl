@@ -43,6 +43,7 @@ int main() {
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
@@ -119,6 +120,15 @@ int main() {
       }
     }
 
+    glEnable(GL_BLEND);
+    for (auto *mesh : scene->transparentMeshes) {
+      if (camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
+        mesh->render();
+        inFrustum++;
+      }
+    }
+    glDisable(GL_BLEND);
+    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();

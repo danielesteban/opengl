@@ -24,5 +24,6 @@ class Scene {
     virtual void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {}
     std::vector<Geometry *> geometries;
     std::vector<Mesh *> meshes;
+    std::vector<Mesh *> transparentMeshes;
     std::vector<Shader *> shaders;
 };

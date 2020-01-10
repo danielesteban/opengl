@@ -3,6 +3,7 @@
 
 #include "basicShader.hpp"
 #include "gridShader.hpp"
+#include "oceanShader.hpp"
 
 #include "planeGeometry.hpp"
 #include "voxelsGeometry.hpp"
@@ -12,14 +13,24 @@ VoxelsScene::VoxelsScene() {
   shaders.push_back(basicShader);
   GridShader *gridShader = new GridShader();
   shaders.push_back(gridShader);
+  OceanShader *oceanShader = new OceanShader();
+  shaders.push_back(oceanShader);
 
+  Geometry *plane = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
+  geometries.push_back(plane);
   {
-    Geometry *geometry = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
-    geometries.push_back(geometry);
-    Mesh *mesh = new Mesh(geometry, gridShader);
-    mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0, 0));
+    Mesh *mesh = new Mesh(plane, gridShader);
+    mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
     mesh->updateTransform();
     meshes.push_back(mesh);
+  }
+
+  {
+    Mesh *mesh = new Mesh(plane, oceanShader);
+    mesh->position = glm::vec3(0.0f, 4.5f, 0.0f);
+    mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+    mesh->updateTransform();
+    transparentMeshes.push_back(mesh);
   }
 
   chunks.setSeed(rand());

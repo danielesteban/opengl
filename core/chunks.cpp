@@ -71,12 +71,15 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
       for (GLint y = 0; y < ChunkSize * NumSubchunks; y++) {
         const GLint i = (z * ChunkSize * ChunkSize * NumSubchunks) + (y * ChunkSize) + x;
         if (
-          y <= height
-          && noise.GetNoise(
-            (GLfloat) (vz + z),
-            (GLfloat) y / 1.5f,
-            (GLfloat) (vx + x)
-          ) >= 0.0f
+          y == 0
+          || (
+            y <= height
+            && noise.GetNoise(
+              (GLfloat) (vz + z),
+              (GLfloat) y * 0.5f,
+              (GLfloat) (vx + x)
+            ) >= 0.0f
+          )
         ) {
           chunk->voxels[i].type = 1;
           hsv[0] = fmax(noise.GetNoise(
