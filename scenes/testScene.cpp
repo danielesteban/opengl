@@ -14,6 +14,13 @@ TestScene::TestScene() {
   GridShader *gridShader = new GridShader();
   shaders.push_back(gridShader);
 
+  glm::vec3 background(0.0f, 0.0f, 0.0f);
+  glClearColor(background.x, background.y, background.z, 1.0f);
+  for (auto *shader : shaders) {
+    shader->use();
+    shader->updateFog(background, 0.015f);
+  }
+
   {
     Geometry *geometry = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
     geometries.push_back(geometry);

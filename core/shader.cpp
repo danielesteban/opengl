@@ -52,6 +52,8 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   }
 
   uniforms.albedo = glGetUniformLocation(program, "albedo");
+  uniforms.fogColor = glGetUniformLocation(program, "fogColor");
+  uniforms.fogDensity = glGetUniformLocation(program, "fogDensity");
   uniforms.model = glGetUniformLocation(program, "model");
   uniforms.projection = glGetUniformLocation(program, "projection");
   uniforms.view = glGetUniformLocation(program, "view");
@@ -79,6 +81,15 @@ void Shader::updateCamera(const Camera &camera) {
   }
   if (uniforms.view != -1) {
     glUniformMatrix4fv(uniforms.view, 1, GL_FALSE, glm::value_ptr(camera.view));
+  }
+}
+
+void Shader::updateFog(const glm::vec3 &color, const GLfloat density) {
+  if (uniforms.fogColor != -1) {
+    glUniform3fv(uniforms.fogColor, 1, glm::value_ptr(color));
+  }
+  if (uniforms.fogDensity != -1) {
+    glUniform1f(uniforms.fogDensity, density);
   }
 }
 

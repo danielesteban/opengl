@@ -18,6 +18,13 @@ VoxelsScene::VoxelsScene() {
   VoxelsShader *voxelsShader = new VoxelsShader();
   shaders.push_back(voxelsShader);
 
+  glm::vec3 background(0.4f, 0.7f, 1.0f);
+  glClearColor(background.x, background.y, background.z, 1.0f);
+  for (auto *shader : shaders) {
+    shader->use();
+    shader->updateFog(background, 0.015f);
+  }
+
   Texture *noiseTexture = (Texture *) new NoiseTexture();
   textures.push_back(noiseTexture);
 
@@ -60,5 +67,12 @@ VoxelsScene::VoxelsScene() {
         meshes.push_back(mesh);
       }
     }
+  }
+}
+
+void VoxelsScene::animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {
+  if (camera.position.y < 6.0f) {
+    camera.position.y = 6.0f;
+    camera.updateView();
   }
 }
