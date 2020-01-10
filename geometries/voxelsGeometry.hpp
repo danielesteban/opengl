@@ -9,4 +9,5 @@ class VoxelsGeometry : public Geometry {
   private:
     static const Voxel air;
     static const Voxel bedrock;
+    static const glm::vec2 VoxelsGeometry::uv[4];
 };

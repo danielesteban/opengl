@@ -2,11 +2,25 @@
 
 const Voxel VoxelsGeometry::air = {0, { 0.0f, 0.0f, 0.0f }};
 const Voxel VoxelsGeometry::bedrock = {0xFF, { 0.0f, 0.0f, 0.0f }};
+const glm::vec2 VoxelsGeometry::uv[4] = {
+  {0.0f, 0.0f},
+  {1.0f, 0.0f},
+  {1.0f, 1.0f},
+  {0.0f, 1.0f},
+};
+
+typedef struct {
+  GLfloat x, y, z,  r, g, b,  u, v;
+} Vertex;
 
 VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, const GLint cz) {
-  typedef struct {
-    GLfloat x, y, z,  r, g, b,  u, v;
-  } Vertex;
+  const Chunk *neighbours[3][3] = {
+    {chunks->get(cx - 1, cz - 1), chunks->get(cx, cz - 1), chunks->get(cx + 1, cz - 1)},
+    {chunks->get(cx - 1, cz), chunks->get(cx, cz), chunks->get(cx + 1, cz)},
+    {chunks->get(cx - 1, cz + 1), chunks->get(cx, cz + 1), chunks->get(cx + 1, cz + 1)}
+  };
+  const GLint yOffset = cy * ChunkSize;
+  
   std::vector<GLushort> indices;
   std::vector<Vertex> vertices;
   GLushort offset = 0;
@@ -14,20 +28,6 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, c
     GLint x, y, z;
     GLfloat light;
   } points[4];
-
-  const GLint yOffset = cy * ChunkSize;
-  const glm::vec2 uv[4] = {
-    {0.0f, 0.0f},
-    {1.0f, 0.0f},
-    {1.0f, 1.0f},
-    {0.0f, 1.0f},
-  };
-
-  const Chunk *neighbours[3][3] = {
-    {chunks->get(cx - 1, cz - 1), chunks->get(cx, cz - 1), chunks->get(cx + 1, cz - 1)},
-    {chunks->get(cx - 1, cz), chunks->get(cx, cz), chunks->get(cx + 1, cz)},
-    {chunks->get(cx - 1, cz + 1), chunks->get(cx, cz + 1), chunks->get(cx + 1, cz + 1)}
-  };
 
   auto ao = [](const bool n1, const bool n2, const bool n3) {
     GLfloat light = 1.0f;
@@ -72,7 +72,7 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, c
     ];
   };
 
-  auto pushFace = [&indices, &vertices, &offset, &points, &uv](const GLubyte type, const glm::vec3 &color) {
+  auto pushFace = [&indices, &vertices, &offset, &points](const GLubyte type, const glm::vec3 &color) {
     const GLint v = (points[0].light + points[2].light < points[1].light + points[3].light) ? 1 : 0;
     for (GLint p = 0; p < 4; p += 1) {
       GLint i = (v + p) % 4;
