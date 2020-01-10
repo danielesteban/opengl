@@ -25,15 +25,11 @@ class Chunks {
   public:
     Chunks();
     const Chunk* get(const GLint x, const GLint z);
-    const Voxel* getVoxel(const GLint x, const GLint y, const GLint z);
     void setSeed(const GLuint seed);
-    const bool test(const GLint x, const GLint y, const GLint z);
   private:
     FastNoise noise;
     color::hsv<GLfloat> hsv;
     color::rgb<GLfloat> rgb;
-    Chunk* generate(const GLint cx, const GLint cz);
     std::map<std::pair<GLint, GLint>, Chunk*> cache;
-    static const Voxel air;
-    static const Voxel bedrock;
+    Chunk* generate(const GLint cx, const GLint cz);
 };

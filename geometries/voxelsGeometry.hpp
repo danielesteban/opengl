@@ -5,7 +5,8 @@
 
 class VoxelsGeometry : public Geometry {
   public:
-    VoxelsGeometry(Chunks *chunks, const GLint x, const GLint y, const GLint z);
+    VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, const GLint cz);
   private:
-    static const GLfloat ao(const bool n1, const bool n2, const bool n3);
+    static const Voxel air;
+    static const Voxel bedrock;
 };

@@ -67,17 +67,20 @@ int main() {
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   Camera camera;
-  Scene *scene = (Scene *) new TestScene();
+  Scene *scene = (Scene *) new VoxelsScene();
 
-  bool isVoxels = false;
-  auto swapScene = [&isVoxels, &scene]() {
+  GLint sceneIndex = 0;
+  auto swapScene = [&scene, &sceneIndex]() {
     delete scene;
-    if (isVoxels) {
-      scene = (Scene *) new TestScene();
-    } else {
-      scene = (Scene *) new VoxelsScene();
+    sceneIndex = (sceneIndex + 1) % 2;
+    switch (sceneIndex) {
+      case 0:
+        scene = (Scene *) new VoxelsScene();
+        break;
+      case 1:
+        scene = (Scene *) new TestScene();
+        break;
     }
-    isVoxels = !isVoxels;
   };
 
   struct {
