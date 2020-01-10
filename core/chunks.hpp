@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
+#include "color.hpp"
 #include "FastNoise.h"
 
 #define ChunkSize 16
@@ -29,6 +30,8 @@ class Chunks {
     const bool test(const GLint x, const GLint y, const GLint z);
   private:
     FastNoise noise;
+    color::hsv<GLfloat> hsv;
+    color::rgb<GLfloat> rgb;
     Chunk* generate(const GLint cx, const GLint cz);
     std::map<std::pair<GLint, GLint>, Chunk*> cache;
     static const Voxel air;

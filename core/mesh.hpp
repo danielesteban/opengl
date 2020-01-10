@@ -4,10 +4,11 @@
 #include "camera.hpp"
 #include "geometry.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
 
 class Mesh {
   public:
-    Mesh(Geometry *geometry, Shader *shader);
+    Mesh(Geometry *geometry, Shader *shader, Texture *texture = nullptr);
     glm::vec3 albedo;
     struct {
       glm::vec3 origin;
@@ -21,5 +22,6 @@ class Mesh {
   private:
     Geometry *geometry;
     Shader *shader;
+    Texture *texture;
     glm::mat4 transform;
 };

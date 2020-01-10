@@ -11,6 +11,7 @@ include_directories(
   geometries
   scenes
   shaders
+  textures
   lib/color/src/color
   lib/FastNoise
   ${CONAN_SRC_DIRS_IMGUI}/bindings
@@ -22,6 +23,7 @@ file(GLOB Engine_SOURCES
   "geometries/*.cpp"
   "scenes/*.cpp"
   "shaders/*.cpp"
+  "textures/*.cpp"
   lib/FastNoise/FastNoise.cpp
   ${CONAN_SRC_DIRS_IMGUI}/bindings/imgui_impl_glfw.cpp
   ${CONAN_SRC_DIRS_IMGUI}/bindings/imgui_impl_opengl3.cpp

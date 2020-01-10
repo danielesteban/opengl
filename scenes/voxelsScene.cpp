@@ -1,20 +1,25 @@
 #include "voxelsScene.hpp"
 #include "color.hpp"
 
-#include "basicShader.hpp"
 #include "gridShader.hpp"
 #include "oceanShader.hpp"
+#include "voxelsShader.hpp"
+
+#include "noisetexture.hpp"
 
 #include "planeGeometry.hpp"
 #include "voxelsGeometry.hpp"
 
 VoxelsScene::VoxelsScene() {
-  BasicShader *basicShader = new BasicShader();
-  shaders.push_back(basicShader);
   GridShader *gridShader = new GridShader();
   shaders.push_back(gridShader);
   OceanShader *oceanShader = new OceanShader();
   shaders.push_back(oceanShader);
+  VoxelsShader *voxelsShader = new VoxelsShader();
+  shaders.push_back(voxelsShader);
+
+  Texture *noiseTexture = (Texture *) new NoiseTexture();
+  textures.push_back(noiseTexture);
 
   Geometry *plane = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
   geometries.push_back(plane);
@@ -34,7 +39,7 @@ VoxelsScene::VoxelsScene() {
   }
 
   chunks.setSeed(rand());
-  const GLint renderRadius = 6;
+  const GLint renderRadius = 8;
   for (GLint z = -renderRadius; z <= renderRadius; z++) {
     for (GLint x = -renderRadius; x <= renderRadius; x++) {
       for (GLint y = 0; y < NumSubchunks; y++) {
@@ -45,7 +50,7 @@ VoxelsScene::VoxelsScene() {
           continue;
         }
         geometries.push_back(geometry);
-        Mesh *mesh = new Mesh(geometry, basicShader);
+        Mesh *mesh = new Mesh(geometry, voxelsShader, noiseTexture);
         mesh->position = glm::vec3(
           ChunkSize * -0.5f + (GLfloat) x * ChunkSize,
           (GLfloat) y * ChunkSize,

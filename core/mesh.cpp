@@ -2,10 +2,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-Mesh::Mesh(Geometry *geometry, Shader *shader) :
+Mesh::Mesh(Geometry *geometry, Shader *shader, Texture *texture) :
   albedo(1.0f, 1.0f, 1.0f),
   geometry(geometry),
   shader(shader),
+  texture(texture),
   scale(1.0f, 1.0f, 1.0f)
 {
   updateTransform();
@@ -15,6 +16,9 @@ void Mesh::render() {
   shader->use();
   shader->updateAlbedo(albedo);
   shader->updateModel(transform);
+  if (texture != nullptr) {
+    texture->bind();
+  }
   geometry->draw();
 }
 

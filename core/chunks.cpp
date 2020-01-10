@@ -1,5 +1,4 @@
 #include "chunks.hpp"
-#include "color.hpp"
 
 const Voxel Chunks::air = {0, { 0.0f, 0.0f, 0.0f }};
 const Voxel Chunks::bedrock = {0xFF, { 0.0f, 0.0f, 0.0f }};
@@ -63,8 +62,6 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
     }
   }
 
-  color::hsv<GLfloat> hsv;
-  color::rgb<GLfloat> rgb;
   for (GLint z = 0; z < ChunkSize; z++) {
     for (GLint x = 0; x < ChunkSize; x++) {
       const GLfloat height = (GLfloat) chunk->heightmap[z * ChunkSize + x];
