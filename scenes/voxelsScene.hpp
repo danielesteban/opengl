@@ -1,7 +1,7 @@
 #pragma once
 
-#include "chunks.hpp"
 #include "scene.hpp"
+#include "chunks.hpp"
 
 class VoxelsScene : public Scene {
   public:

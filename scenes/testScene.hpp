@@ -1,7 +1,7 @@
 #pragma once
 
-#include "FastNoise.h"
 #include "scene.hpp"
+#include "FastNoise.h"
 
 class TestScene : public Scene {
   public:

@@ -99,6 +99,14 @@ int main() {
       fps.acc = 0;
     }
 
+    if (needsResize) {
+      needsResize = false;
+      GLint width, height;
+      glfwGetFramebufferSize(window, &width, &height);
+      glViewport(0, 0, width, height);
+      camera.resize(width, height);
+    }
+
     camera.animate(input, time, delta);
     scene->animate(camera, input, time, delta);
     if (input.mouse.secondaryDown) {
@@ -150,13 +158,6 @@ int main() {
 
     glfwSwapBuffers(window);
     glfwPollEvents();
-    if (needsResize) {
-      GLint width, height;
-      glfwGetFramebufferSize(window, &width, &height);
-      glViewport(0, 0, width, height);
-      camera.resize(width, height);
-      needsResize = false;
-    }
   }
 
   glfwDestroyWindow(window);
