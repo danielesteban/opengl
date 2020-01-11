@@ -144,13 +144,14 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 110.0f, 10.0f), 0);
-    ImGui::SetNextWindowSize(ImVec2(100.0f, 0.0f), 0);
+    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 130.0f, 10.0f), 0);
+    ImGui::SetNextWindowSize(ImVec2(120.0f, 0.0f), 0);
     ImGui::Begin("Debug");
-    ImGui::Text("%d Meshes", scene->meshes.size());
-    ImGui::Text("%d Frustum", inFrustum);
-    ImGui::Text("%d Shaders", scene->shaders.size());
     ImGui::Text("%d FPS", fps.lastCount);
+    ImGui::Text("%d Shaders", scene->shaders.size());
+    ImGui::Text("%d Meshes", scene->meshes.size());
+    ImGui::Text("%d in frustum", inFrustum);
+    scene->debug();
     ImGui::End();
 
     ImGui::Render();

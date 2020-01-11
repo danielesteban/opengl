@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 #include <vector>
 #include "camera.hpp"
 #include "input.hpp"
@@ -27,6 +28,7 @@ class Scene {
       textures.clear();
     }
     virtual void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {}
+    virtual void debug() {}
     std::vector<Geometry *> geometries;
     std::vector<Mesh *> meshes;
     std::vector<Mesh *> transparentMeshes;

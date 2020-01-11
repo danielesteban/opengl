@@ -79,7 +79,16 @@ void VoxelsScene::animate(Camera &camera, const Input &input, const GLfloat time
   }
 }
 
+void VoxelsScene::debug() {
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+  ImGui::Text("%d chunks", voxels.size() / NumSubchunks);
+  ImGui::Text("meshed in %dms", generationTime);
+}
+
 void VoxelsScene::generate() {
+  const GLfloat start = (GLfloat) glfwGetTime();
   chunks.setSeed(rand());
   for (GLint i = 0, z = -renderRadius; z <= renderRadius; z++) {
     for (GLint y = 0; y < NumSubchunks; y++) {
@@ -91,4 +100,5 @@ void VoxelsScene::generate() {
       }
     }
   }
+  generationTime = (GLint) (((GLfloat) glfwGetTime() - start) * 1000.0f);
 }
