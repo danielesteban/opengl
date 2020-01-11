@@ -34,7 +34,7 @@ const char *VoxelsShader::fragmentSource =
   "void main() {\n"
   "  float fogDepth = length(viewPosition);\n"
   "  float fogFactor = 1.0 - exp(-fogDensity * fogDensity * fogDepth * fogDepth);\n"
-  "  fragColor = vec4(mix(vec3(texture2D(diffuse, uv)) * color * albedo, fogColor, fogFactor), 1.0);\n"
+  "  fragColor = vec4(mix(texture2D(diffuse, uv).rgb * color * albedo, fogColor, fogFactor), 1.0);\n"
   "}\n";
 
 VoxelsShader::VoxelsShader() : Shader(vertexSource, fragmentSource) {

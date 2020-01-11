@@ -5,6 +5,9 @@
 #include <imgui_impl_opengl3.h>
 #include "camera.hpp"
 #include "input.hpp"
+#include "framebuffer.hpp"
+#include "planeGeometry.hpp"
+#include "postprocessingShader.hpp"
 #include "testScene.hpp"
 #include "voxelsScene.hpp"
 
@@ -45,8 +48,6 @@ int main() {
   }
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_MULTISAMPLE);
   glfwSetFramebufferSizeCallback(window, onResize);
   glfwSwapInterval(1);
 
@@ -67,9 +68,13 @@ int main() {
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   Camera camera;
-  Scene *scene = (Scene *) new VoxelsScene();
+  Framebuffer renderBuffer(true, true);
+  Framebuffer screenBuffer(false, false);
+  PlaneGeometry screenQuad(2.0f, 2.0f);
+  PostprocessingShader postprocessing;
 
   GLint sceneIndex = 0;
+  Scene *scene = (Scene *) new VoxelsScene();
   auto swapScene = [&scene, &sceneIndex]() {
     delete scene;
     sceneIndex = (sceneIndex + 1) % 2;
@@ -105,6 +110,12 @@ int main() {
       glfwGetFramebufferSize(window, &width, &height);
       glViewport(0, 0, width, height);
       camera.resize(width, height);
+      renderBuffer.resize(width, height);
+      screenBuffer.resize(width, height);
+      postprocessing.use();
+      postprocessing.updateResolution(
+        glm::vec2(screenBuffer.width, screenBuffer.height)
+      );
     }
 
     camera.animate(input, time, delta);
@@ -121,6 +132,8 @@ int main() {
       shader->updateCamera(camera);
     }
 
+    renderBuffer.bind();
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLuint inFrustum = 0;
@@ -139,6 +152,21 @@ int main() {
       }
     }
     glDisable(GL_BLEND);
+
+    renderBuffer.bindRead();
+    screenBuffer.bindDraw();
+    glBlitFramebuffer(
+      0, 0, renderBuffer.width, renderBuffer.height,
+      0, 0, screenBuffer.width, screenBuffer.height,
+      GL_COLOR_BUFFER_BIT, GL_NEAREST
+    );
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+    postprocessing.use();
+    screenBuffer.bindTexture();
+    screenQuad.draw();
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

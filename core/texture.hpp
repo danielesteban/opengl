@@ -7,7 +7,6 @@ class Texture {
   public:
     Texture();
     ~Texture();
-    void bind();
-  protected:
     GLuint texture;
+    void bind();
 };

@@ -57,6 +57,13 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   uniforms.model = glGetUniformLocation(program, "model");
   uniforms.projection = glGetUniformLocation(program, "projection");
   uniforms.view = glGetUniformLocation(program, "view");
+  uniforms.resolution = glGetUniformLocation(program, "resolution");
+
+  GLuint diffuse = glGetUniformLocation(program, "diffuse");
+  if (diffuse != -1) {
+    use();
+    glUniform1i(diffuse, 0);
+  }
 }
 
 Shader::~Shader() {
@@ -96,5 +103,11 @@ void Shader::updateFog(const glm::vec3 &color, const GLfloat density) {
 void Shader::updateModel(const glm::mat4 &matrix) {
   if (uniforms.model != -1) {
     glUniformMatrix4fv(uniforms.model, 1, GL_FALSE, glm::value_ptr(matrix));
+  }
+}
+
+void Shader::updateResolution(const glm::vec2 &resolution) {
+  if (uniforms.resolution != -1) {
+    glUniform2fv(uniforms.resolution, 1, glm::value_ptr(resolution));
   }
 }

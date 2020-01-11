@@ -1,6 +1,6 @@
-#include "basicShader.hpp"
+#include "cubeShader.hpp"
 
-const char *BasicShader::vertexSource = 
+const char *CubeShader::vertexSource = 
   "#version 330\n"
   "layout (location = 0) in vec3 vPos;\n"
   "layout (location = 1) in vec3 vCol;\n"
@@ -17,7 +17,7 @@ const char *BasicShader::vertexSource =
   "  gl_Position = projection * viewPosition;\n"
   "}\n";
 
-const char *BasicShader::fragmentSource = 
+const char *CubeShader::fragmentSource = 
   "#version 330\n"
   "in vec3 color;\n"
   "in vec3 worldPosition;\n"
@@ -32,6 +32,6 @@ const char *BasicShader::fragmentSource =
   "  fragColor = vec4(mix(color * albedo, fogColor, fogFactor), 1.0);\n"
   "}\n";
 
-BasicShader::BasicShader() : Shader(vertexSource, fragmentSource) {
+CubeShader::CubeShader() : Shader(vertexSource, fragmentSource) {
 
 }
