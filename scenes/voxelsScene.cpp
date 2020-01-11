@@ -83,8 +83,7 @@ void VoxelsScene::debug() {
   ImGui::Spacing();
   ImGui::Separator();
   ImGui::Spacing();
-  ImGui::Text("%d chunks", voxels.size() / NumSubchunks);
-  ImGui::Text("meshed in %dms", generationTime);
+  ImGui::Text("%d meshed in %dms", voxels.size() / NumSubchunks, generationTime);
 }
 
 void VoxelsScene::generate() {

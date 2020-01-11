@@ -156,15 +156,28 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 130.0f, 10.0f), 0);
-    ImGui::SetNextWindowSize(ImVec2(120.0f, 0.0f), 0);
-    ImGui::Begin("Debug");
-    ImGui::Text("%d FPS", fps.lastCount);
-    ImGui::Text("%d Shaders", scene->shaders.size());
-    ImGui::Text("%d Meshes", scene->meshes.size());
-    ImGui::Text("%d in frustum", inFrustum);
-    scene->debug();
-    ImGui::End();
+    if (input.showDebug) {
+      ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 190.0f, 10.0f), 0);
+      ImGui::SetNextWindowSize(ImVec2(180.0f, 0.0f), 0);
+      ImGui::Begin("Debug [F3]");
+      ImGui::Text("%d fps", fps.lastCount);
+      ImGui::Spacing();
+      ImGui::Text(
+        "XYZ: %.2f %.2f %.2f",
+        camera.position.x,
+        camera.position.y,
+        camera.position.z
+      );
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+      ImGui::Text("%d Meshes", scene->meshes.size());
+      ImGui::Text("%d Geometries", scene->geometries.size());
+      ImGui::Text("%d Meshes in frustum", inFrustum);
+      ImGui::Text("%d Shaders", scene->shaders.size());
+      scene->debug();
+      ImGui::End();
+    }
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

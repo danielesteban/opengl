@@ -35,6 +35,7 @@ class Input {
       bool primary, primaryDown, secondary, secondaryDown;
       glm::vec2 position, movement;
     } mouse;
+    bool showDebug = true;
 
     void onFocus(GLFWwindow* window, int focused) {
       if (isLocked && focused == GLFW_FALSE) {
@@ -70,6 +71,11 @@ class Input {
           break;
         case GLFW_KEY_SPACE:
           keyboard.upwards = hasPressed;
+          break;
+        case GLFW_KEY_F3:
+          if (hasPressed) {
+            showDebug = !showDebug;
+          }
           break;
         default:
           break;
