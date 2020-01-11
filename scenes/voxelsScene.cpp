@@ -13,11 +13,11 @@
 const GLint VoxelsScene::renderRadius = 8;
 
 VoxelsScene::VoxelsScene() {
-  GridShader *gridShader = new GridShader();
+  Shader *gridShader = new GridShader();
   shaders.push_back(gridShader);
-  OceanShader *oceanShader = new OceanShader();
+  Shader *oceanShader = new OceanShader();
   shaders.push_back(oceanShader);
-  VoxelsShader *voxelsShader = new VoxelsShader();
+  Shader *voxelsShader = new VoxelsShader();
   shaders.push_back(voxelsShader);
 
   glm::vec3 background(0.4f, 0.7f, 1.0f);
@@ -27,10 +27,10 @@ VoxelsScene::VoxelsScene() {
     shader->updateFog(background, 0.015f);
   }
 
-  Texture *noiseTexture = (Texture *) new NoiseTexture();
+  Texture *noiseTexture = new NoiseTexture();
   textures.push_back(noiseTexture);
 
-  Geometry *plane = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
+  Geometry *plane = new PlaneGeometry(1000.0f, 1000.0f);
   geometries.push_back(plane);
   {
     Mesh *mesh = new Mesh(plane, gridShader);
@@ -50,7 +50,7 @@ VoxelsScene::VoxelsScene() {
   for (GLint z = -renderRadius; z <= renderRadius; z++) {
     for (GLint y = 0; y < NumSubchunks; y++) {
       for (GLint x = -renderRadius; x <= renderRadius; x++) {
-        Geometry *geometry = (Geometry *) new VoxelsGeometry();
+        Geometry *geometry = new VoxelsGeometry();
         geometries.push_back(geometry);
         Mesh *mesh = new Mesh(geometry, voxelsShader, noiseTexture);
         mesh->position = glm::vec3(

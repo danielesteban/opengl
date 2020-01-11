@@ -9,9 +9,9 @@
 
 
 TestScene::TestScene() {
-  BasicShader *basicShader = new BasicShader();
+  Shader *basicShader = new BasicShader();
   shaders.push_back(basicShader);
-  GridShader *gridShader = new GridShader();
+  Shader *gridShader = new GridShader();
   shaders.push_back(gridShader);
 
   glm::vec3 background(0.0f, 0.0f, 0.0f);
@@ -22,7 +22,7 @@ TestScene::TestScene() {
   }
 
   {
-    Geometry *geometry = (Geometry *) new PlaneGeometry(1000.0f, 1000.0f);
+    Geometry *geometry = new PlaneGeometry(1000.0f, 1000.0f);
     geometries.push_back(geometry);
     Mesh *mesh = new Mesh(geometry, gridShader);
     mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0, 0));
@@ -32,7 +32,7 @@ TestScene::TestScene() {
 
   noise.SetNoiseType(FastNoise::SimplexFractal);
 
-  Geometry *box = (Geometry *) new BoxGeometry(1.0f, 1.0f, 1.0f);
+  Geometry *box = new BoxGeometry(1.0f, 1.0f, 1.0f);
   geometries.push_back(box);
   for (int z = 0; z < 100; z += 1) {
     for (int x = 0; x < 100; x += 1) {
