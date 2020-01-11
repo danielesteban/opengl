@@ -10,6 +10,8 @@
 #include "planeGeometry.hpp"
 #include "voxelsGeometry.hpp"
 
+const GLint VoxelsScene::renderRadius = 8;
+
 VoxelsScene::VoxelsScene() {
   GridShader *gridShader = new GridShader();
   shaders.push_back(gridShader);
@@ -45,17 +47,10 @@ VoxelsScene::VoxelsScene() {
     transparentMeshes.push_back(mesh);
   }
 
-  chunks.setSeed(rand());
-  const GLint renderRadius = 8;
   for (GLint z = -renderRadius; z <= renderRadius; z++) {
-    for (GLint x = -renderRadius; x <= renderRadius; x++) {
-      for (GLint y = 0; y < NumSubchunks; y++) {
-        Geometry *geometry = (Geometry *) new VoxelsGeometry(&chunks, x, y, z);
-        if (geometry->count == 0) {
-          delete geometry;
-          geometry = nullptr;
-          continue;
-        }
+    for (GLint y = 0; y < NumSubchunks; y++) {
+      for (GLint x = -renderRadius; x <= renderRadius; x++) {
+        Geometry *geometry = (Geometry *) new VoxelsGeometry();
         geometries.push_back(geometry);
         Mesh *mesh = new Mesh(geometry, voxelsShader, noiseTexture);
         mesh->position = glm::vec3(
@@ -64,15 +59,36 @@ VoxelsScene::VoxelsScene() {
           ChunkSize * -0.5f + (GLfloat) z * ChunkSize
         );
         mesh->updateTransform();
+        mesh->visible = false;
         meshes.push_back(mesh);
+        voxels.push_back(mesh);
       }
     }
   }
+
+  generate();
 }
 
 void VoxelsScene::animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {
-  if (camera.position.y < 6.0f) {
-    camera.position.y = 6.0f;
+  if (camera.position.y < 5.0f) {
+    camera.position.y = 5.0f;
     camera.updateView();
+  }
+  if (input.mouse.primaryDown) {
+    generate();
+  }
+}
+
+void VoxelsScene::generate() {
+  chunks.setSeed(rand());
+  for (GLint i = 0, z = -renderRadius; z <= renderRadius; z++) {
+    for (GLint y = 0; y < NumSubchunks; y++) {
+      for (GLint x = -renderRadius; x <= renderRadius; x++, i++) {
+        Mesh* mesh = voxels[i];
+        VoxelsGeometry *geometry = (VoxelsGeometry *) mesh->geometry;
+        geometry->generate(&chunks, x, y, z);
+        mesh->visible = geometry->count != 0;
+      }
+    }
   }
 }

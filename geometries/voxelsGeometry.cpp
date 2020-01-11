@@ -13,7 +13,13 @@ typedef struct {
   GLfloat x, y, z,  r, g, b,  u, v;
 } Vertex;
 
-VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, const GLint cz) {
+VoxelsGeometry::VoxelsGeometry() {
+  const GLfloat side = ChunkSize * 0.5f;
+  origin = glm::vec3(side, side, side);
+  radius = sqrt(side * side + side * side);
+}
+
+void VoxelsGeometry::generate(Chunks *chunks, const GLint cx, const GLint cy, const GLint cz) {
   const Chunk *neighbours[3][3] = {
     {chunks->get(cx - 1, cz - 1), chunks->get(cx, cz - 1), chunks->get(cx + 1, cz - 1)},
     {chunks->get(cx - 1, cz), chunks->get(cx, cz), chunks->get(cx + 1, cz)},
@@ -178,24 +184,21 @@ VoxelsGeometry::VoxelsGeometry(Chunks *chunks, const GLint cx, const GLint cy, c
   }
 
   count = (GLuint) indices.size();
-  if (count > 0) {
-    const GLfloat side = ChunkSize * 0.5f;
-    origin = glm::vec3(side, side, side);
-    radius = sqrt(side * side + side * side);
+  if (count != 0) {
     glBindVertexArray(vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(GLfloat) * 3));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(GLfloat) * 6));
+    glBindVertexArray(0);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
   }
-  glBindVertexArray(0);
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(2);
 }

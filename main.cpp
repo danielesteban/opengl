@@ -125,7 +125,7 @@ int main() {
 
     GLuint inFrustum = 0;
     for (auto *mesh : scene->meshes) {
-      if (camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
+      if (mesh->visible && camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
         mesh->render();
         inFrustum++;
       }
@@ -133,7 +133,7 @@ int main() {
 
     glEnable(GL_BLEND);
     for (auto *mesh : scene->transparentMeshes) {
-      if (camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
+      if (mesh->visible && camera.isInFrustum(mesh->culling.origin, mesh->culling.radius)) {
         mesh->render();
         inFrustum++;
       }

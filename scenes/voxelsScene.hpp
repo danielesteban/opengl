@@ -9,4 +9,7 @@ class VoxelsScene : public Scene {
     void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta);
   private:
     Chunks chunks;
+    std::vector<Mesh *> voxels;
+    void generate();
+    static const GLint renderRadius; 
 };

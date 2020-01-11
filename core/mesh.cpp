@@ -7,7 +7,8 @@ Mesh::Mesh(Geometry *geometry, Shader *shader, Texture *texture) :
   geometry(geometry),
   shader(shader),
   texture(texture),
-  scale(1.0f, 1.0f, 1.0f)
+  scale(1.0f, 1.0f, 1.0f),
+  visible(true)
 {
   updateTransform();
 }

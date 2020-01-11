@@ -67,5 +67,6 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
 }
 
 void Chunks::setSeed(const GLuint seed) {
+  cache.clear();
   noise.SetSeed(seed);
 }
