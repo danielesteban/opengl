@@ -15,11 +15,12 @@ class Shader {
     void updateFog(const glm::vec3 &color, const GLfloat density);
     void updateModel(const glm::mat4 &matrix);
     void updateResolution(const glm::vec2 &resolution);
+    void updateSamples(const GLint count);
   private:
     GLuint program;
     GLuint fragmentShader;
     GLuint vertexShader;
     struct {
-      GLuint albedo, fogColor, fogDensity, model, projection, view, resolution;
+      GLuint albedo, fogColor, fogDensity, model, projection, view, resolution, samples;
     } uniforms;
 };

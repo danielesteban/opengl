@@ -58,11 +58,12 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   uniforms.projection = glGetUniformLocation(program, "projection");
   uniforms.view = glGetUniformLocation(program, "view");
   uniforms.resolution = glGetUniformLocation(program, "resolution");
+  uniforms.samples = glGetUniformLocation(program, "samples");
 
-  GLuint diffuse = glGetUniformLocation(program, "diffuse");
-  if (diffuse != -1) {
+  GLuint colorTexture = glGetUniformLocation(program, "colorTexture");
+  if (colorTexture != -1) {
     use();
-    glUniform1i(diffuse, 0);
+    glUniform1i(colorTexture, 0);
   }
 }
 
@@ -109,5 +110,11 @@ void Shader::updateModel(const glm::mat4 &matrix) {
 void Shader::updateResolution(const glm::vec2 &resolution) {
   if (uniforms.resolution != -1) {
     glUniform2fv(uniforms.resolution, 1, glm::value_ptr(resolution));
+  }
+}
+
+void Shader::updateSamples(const GLint count) {
+  if (uniforms.samples != -1) {
+    glUniform1i(uniforms.samples, count);
   }
 }

@@ -4,15 +4,16 @@
 #include <stdio.h>
 #endif
 
-const GLuint Framebuffer::numSamples = 4;
-
-Framebuffer::Framebuffer(const bool depth, const bool multisampled) :
-  depth(depth),
-  multisampled(multisampled)
+Framebuffer::Framebuffer(Shader *shader, const GLint samples) :
+  shader(shader),
+  samples(samples),
+  screen(2.0f, 2.0f)
 {
   glGenFramebuffers(1, &fbo);
   glGenRenderbuffers(1, &rbo);
   glGenTextures(1, &texture);
+  shader->use();
+  shader->updateSamples(samples);
 }
 
 Framebuffer::~Framebuffer() {
@@ -25,50 +26,23 @@ void Framebuffer::bind() {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
-void Framebuffer::bindDraw() {
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
-}
-
-void Framebuffer::bindRead() {
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-}
-
-void Framebuffer::bindTexture() {
+void Framebuffer::render() {
+  shader->use();
   glActiveTexture(GL_TEXTURE0);
-  if (multisampled) {
-    // TODO!
-  } else {
-    glBindTexture(GL_TEXTURE_2D, texture);
-  }
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+  screen.draw();
 }
 
 void Framebuffer::resize(GLint width, GLint height) {
-  this->width = width;
-  this->height = height;
-
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-  if (multisampled) {
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB, width, height, GL_TRUE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture, 0);
-  } else {
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-  }
-
-  if (depth) {
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    if (multisampled) {
-      glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);  
-    } else {
-      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    }
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-  }
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+  glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture, 0);
+ 
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+  glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);  
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     #ifndef NDEBUG
@@ -79,4 +53,7 @@ void Framebuffer::resize(GLint width, GLint height) {
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  shader->use();
+  shader->updateResolution(glm::vec2(width, height));
 }

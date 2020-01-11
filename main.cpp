@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <time.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -23,7 +24,6 @@ int main() {
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-  glfwWindowHint(GLFW_SAMPLES, 4);
   const GLint windowSize[2] = { 1280, 720 };
   GLFWwindow *window = glfwCreateWindow(windowSize[0], windowSize[1], "C++ is easy  |  dani@gatunes © 2020 ", NULL, NULL);
   if (!window) {
@@ -50,6 +50,7 @@ int main() {
   glEnable(GL_CULL_FACE);
   glfwSetFramebufferSizeCallback(window, onResize);
   glfwSwapInterval(1);
+  srand((GLuint) time(NULL));
 
   Input &input = Input::getInstance();
   glfwSetCursorPosCallback(window, &Input::cursorPosCallback);
@@ -68,10 +69,8 @@ int main() {
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   Camera camera;
-  Framebuffer renderBuffer(true, true);
-  Framebuffer screenBuffer(false, false);
-  PlaneGeometry screenQuad(2.0f, 2.0f);
   PostprocessingShader postprocessing;
+  Framebuffer renderBuffer(&postprocessing);
 
   GLint sceneIndex = 0;
   Scene *scene = (Scene *) new VoxelsScene();
@@ -111,11 +110,6 @@ int main() {
       glViewport(0, 0, width, height);
       camera.resize(width, height);
       renderBuffer.resize(width, height);
-      screenBuffer.resize(width, height);
-      postprocessing.use();
-      postprocessing.updateResolution(
-        glm::vec2(screenBuffer.width, screenBuffer.height)
-      );
     }
 
     camera.animate(input, time, delta);
@@ -153,20 +147,10 @@ int main() {
     }
     glDisable(GL_BLEND);
 
-    renderBuffer.bindRead();
-    screenBuffer.bindDraw();
-    glBlitFramebuffer(
-      0, 0, renderBuffer.width, renderBuffer.height,
-      0, 0, screenBuffer.width, screenBuffer.height,
-      GL_COLOR_BUFFER_BIT, GL_NEAREST
-    );
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
-    postprocessing.use();
-    screenBuffer.bindTexture();
-    screenQuad.draw();
+    renderBuffer.render();
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
