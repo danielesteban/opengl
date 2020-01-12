@@ -1,5 +1,5 @@
 #include "gridShader.hpp"
-#include "fogShaderChunk.hpp"
+#include "shaderChunks.hpp"
 
 const char *GridShader::vertexSource = 
   "#version 330\n"

@@ -12,6 +12,7 @@ class Shader {
     void use();
     void updateAlbedo(const glm::vec3 &color);
     void updateCamera(const Camera &camera);
+    void updateFlag(const bool status);
     void updateFog(const glm::vec3 &color, const GLfloat density);
     void updateModel(const glm::mat4 &matrix);
     void updateResolution(const glm::vec2 &resolution);
@@ -21,6 +22,6 @@ class Shader {
     GLuint fragmentShader;
     GLuint vertexShader;
     struct {
-      GLuint albedo, fogColor, fogDensity, model, projection, view, resolution, samples;
+      GLuint albedo, flag, fogColor, fogDensity, model, projection, view, resolution, samples;
     } uniforms;
 };

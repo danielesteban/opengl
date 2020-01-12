@@ -1,5 +1,5 @@
 #include "voxelsShader.hpp"
-#include "fogShaderChunk.hpp"
+#include "shaderChunks.hpp"
 
 const char *VoxelsShader::vertexSource = 
   "#version 330\n"

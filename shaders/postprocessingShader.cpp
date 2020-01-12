@@ -1,4 +1,5 @@
 #include "postprocessingShader.hpp"
+#include "shaderChunks.hpp"
 
 const char *PostprocessingShader::vertexSource = 
   "#version 330\n"
@@ -14,22 +15,21 @@ const char *PostprocessingShader::fragmentSource =
   "#version 330\n"
   "in vec2 uv;\n"
   "out vec4 fragColor;\n"
-  "uniform sampler2DMS colorTexture;\n"
-  "uniform int samples;"
-  "vec4 texture2DMS(sampler2DMS sampler, ivec2 coord) {\n"
-  "  vec4 color = vec4(0.0);\n"
-  "  for (int i = 0; i < samples; i++) {\n"
-  "    color += texelFetch(sampler, coord, i);\n"
-  "  }"
-  "  color /= float(samples);\n"
-  "  return color;\n"
-  "}\n"
   "uniform vec2 resolution;\n"
+  "uniform sampler2DMS blurTexture;\n"
+  "uniform sampler2DMS colorTexture;\n"
+  "uniform sampler2DMS depthTexture;\n"
   "const float gridSize = 3.0;\n"
+  LINEARIZEDEPTH_SHADER_CHUNK
+  TEXTURE2DMS_SHADER_CHUNK
   "void main() {\n"
   "  ivec2 pixel = ivec2(uv * resolution);\n"
+  "  vec3 color = texture2DMS(blurTexture, pixel).rgb;\n"
+  "  float depth = linearizeDepth(texture2DMS(depthTexture, pixel).r);\n"
+  "  vec3 blur = texture2DMS(colorTexture, pixel).rgb;\n"
   "  vec2 grid = (mod(pixel, gridSize) / gridSize) - 0.5;\n"
-  "  fragColor = vec4(texture2DMS(colorTexture, pixel).rgb * (1.0 - length(grid) * 0.5), 1.0);\n"
+  "  float lines = 1.0 - length(grid) * 0.5;\n"
+  "  fragColor = vec4(mix(color, blur, clamp(depth / 128.0, 0.0, 1.0)) * lines, 1.0);\n"
   "}\n";
 
 PostprocessingShader::PostprocessingShader() : Shader(vertexSource, fragmentSource) {

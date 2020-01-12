@@ -1,5 +1,5 @@
 #include "oceanShader.hpp"
-#include "fogShaderChunk.hpp"
+#include "shaderChunks.hpp"
 
 const char *OceanShader::vertexSource = 
   "#version 330\n"

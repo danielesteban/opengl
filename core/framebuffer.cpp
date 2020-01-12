@@ -4,45 +4,51 @@
 #include <stdio.h>
 #endif
 
-Framebuffer::Framebuffer(Shader *shader, const GLint samples) :
-  shader(shader),
-  samples(samples),
-  screen(2.0f, 2.0f)
+Framebuffer::Framebuffer(const bool depth, const GLint samples) :
+  depth(depth),
+  samples(samples)
 {
   glGenFramebuffers(1, &fbo);
-  glGenRenderbuffers(1, &rbo);
-  glGenTextures(1, &texture);
-  shader->use();
-  shader->updateSamples(samples);
+  glGenTextures(1, &colorTexture);
+  if (depth) {
+    glGenTextures(1, &depthTexture);
+  }
 }
 
 Framebuffer::~Framebuffer() {
   glDeleteFramebuffers(1, &fbo);
-  glDeleteRenderbuffers(1, &rbo);
-  glDeleteTextures(1, &texture);
+  glDeleteTextures(1, &colorTexture);
+  if (depth) {
+    glDeleteTextures(1, &depthTexture);
+  }
 }
 
 void Framebuffer::bind() {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
-void Framebuffer::render() {
-  shader->use();
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
-  screen.draw();
+void Framebuffer::bindColorTexture() {
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorTexture);
+}
+
+void Framebuffer::bindDepthTexture() {
+  if (depth) {
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, depthTexture);
+  }
 }
 
 void Framebuffer::resize(GLint width, GLint height) {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorTexture);
   glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture, 0);
- 
-  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-  glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);  
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colorTexture, 0);
+
+  if (depth) {
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, depthTexture);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_DEPTH_COMPONENT, width, height, GL_TRUE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, depthTexture, 0);
+  }
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     #ifndef NDEBUG
@@ -53,7 +59,4 @@ void Framebuffer::resize(GLint width, GLint height) {
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-  shader->use();
-  shader->updateResolution(glm::vec2(width, height));
 }

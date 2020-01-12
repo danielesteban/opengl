@@ -1,5 +1,5 @@
 #include "basicShader.hpp"
-#include "fogShaderChunk.hpp"
+#include "shaderChunks.hpp"
 
 const char *BasicShader::vertexSource = 
   "#version 330\n"

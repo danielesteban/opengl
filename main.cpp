@@ -5,10 +5,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "camera.hpp"
+#include "compositor.hpp"
 #include "input.hpp"
-#include "framebuffer.hpp"
-#include "planeGeometry.hpp"
-#include "postprocessingShader.hpp"
 #include "testScene.hpp"
 #include "voxelsScene.hpp"
 
@@ -69,8 +67,7 @@ int main() {
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   Camera camera;
-  PostprocessingShader postprocessing;
-  Framebuffer renderBuffer(&postprocessing);
+  Compositor compositor;
 
   GLint sceneIndex = 0;
   Scene *scene = (Scene *) new VoxelsScene();
@@ -109,7 +106,7 @@ int main() {
       glfwGetFramebufferSize(window, &width, &height);
       glViewport(0, 0, width, height);
       camera.resize(width, height);
-      renderBuffer.resize(width, height);
+      compositor.resize(width, height);
     }
 
     camera.animate(input, time, delta);
@@ -126,9 +123,7 @@ int main() {
       shader->updateCamera(camera);
     }
 
-    renderBuffer.bind();
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    compositor.initFrame();
 
     GLuint inFrustum = 0;
     for (auto *mesh : scene->meshes) {
@@ -147,11 +142,8 @@ int main() {
     }
     glDisable(GL_BLEND);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT);
-    renderBuffer.render();
-    
+    compositor.renderFrame();
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();

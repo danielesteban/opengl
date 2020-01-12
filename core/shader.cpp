@@ -54,7 +54,9 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
     exit(EXIT_FAILURE);
   }
 
+  use();
   uniforms.albedo = glGetUniformLocation(program, "albedo");
+  uniforms.flag = glGetUniformLocation(program, "flag");
   uniforms.fogColor = glGetUniformLocation(program, "fogColor");
   uniforms.fogDensity = glGetUniformLocation(program, "fogDensity");
   uniforms.model = glGetUniformLocation(program, "model");
@@ -63,10 +65,16 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   uniforms.resolution = glGetUniformLocation(program, "resolution");
   uniforms.samples = glGetUniformLocation(program, "samples");
 
-  GLuint colorTexture = glGetUniformLocation(program, "colorTexture");
-  if (colorTexture != -1) {
-    use();
-    glUniform1i(colorTexture, 0);
+  char *textures[3] = {
+    "colorTexture",
+    "depthTexture",
+    "blurTexture"
+  };
+  for (GLint i = 0; i < 3; i++) {
+    GLuint uniform = glGetUniformLocation(program, textures[i]);
+    if (uniform != -1) {
+      glUniform1i(uniform, i);
+    }
   }
 }
 
@@ -92,6 +100,12 @@ void Shader::updateCamera(const Camera &camera) {
   }
   if (uniforms.view != -1) {
     glUniformMatrix4fv(uniforms.view, 1, GL_FALSE, glm::value_ptr(camera.view));
+  }
+}
+
+void Shader::updateFlag(const bool status) {
+  if (uniforms.flag != -1) {
+    glUniform1i(uniforms.flag, status);
   }
 }
 
