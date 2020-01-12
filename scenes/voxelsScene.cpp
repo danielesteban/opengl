@@ -51,18 +51,19 @@ VoxelsScene::VoxelsScene() {
     transparentMeshes.push_back(mesh);
   }
   
-  const GLfloat grid = 512.0f;
+  const GLfloat cloudRadius = 512.0f;
   for (GLint z = 0; z < 3; z += 1) {
     for (GLint x = 0; x < 3; x += 1) {
       Geometry *geometry = new CloudGeometry();
+      geometries.push_back(geometry);
       Mesh *mesh = new Mesh(geometry, basicShader);
       mesh->position = glm::vec3(
-        -grid + ((GLfloat) x * grid),
+        -cloudRadius + ((GLfloat) x * cloudRadius),
         128.0f + (GLfloat) (rand() % 128),
-        -grid + ((GLfloat) z * grid)
+        -cloudRadius + ((GLfloat) z * cloudRadius)
       );
       mesh->updateTransform();
-      transparentMeshes.push_back(mesh);
+      meshes.push_back(mesh);
     }
   }
 
