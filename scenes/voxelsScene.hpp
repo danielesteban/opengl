@@ -10,7 +10,13 @@ class VoxelsScene : public Scene {
     void debug();
   private:
     Chunks chunks;
-    std::vector<Mesh *> voxels;
+    typedef struct {
+      struct {
+        GLint x, y, z;
+      } chunk;
+      Mesh *mesh;
+    } Voxels;
+    std::vector<Voxels> voxels;
     GLint generationTime;
     void generate();
     static const GLint renderRadius; 

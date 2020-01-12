@@ -29,7 +29,7 @@ const char *PostprocessingShader::fragmentSource =
   "  float depth = linearizeDepth(texture2DMS(depthTexture, pixel).r);\n"
   "  vec2 grid = (mod(pixel, gridSize) / gridSize) - 0.5;\n"
   "  float lines = 1.0 - length(grid) * 0.5;\n"
-  "  fragColor = vec4(mix(color, blur, clamp(depth / 128.0, 0.0, 1.0)) * lines, 1.0);\n"
+  "  fragColor = vec4(mix(color, blur, clamp(depth / 100.0, 0.0, 1.0)) * lines, 1.0);\n"
   "}\n";
 
 PostprocessingShader::PostprocessingShader() : Shader(vertexSource, fragmentSource) {

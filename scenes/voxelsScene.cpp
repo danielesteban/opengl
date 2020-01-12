@@ -70,6 +70,9 @@ VoxelsScene::VoxelsScene() {
   for (GLint z = -renderRadius; z <= renderRadius; z++) {
     for (GLint y = 0; y < NumSubchunks; y++) {
       for (GLint x = -renderRadius; x <= renderRadius; x++) {
+        if (sqrt(pow((GLfloat) z + 0.5f, 2) + pow((GLfloat) x + 0.5f, 2)) >= renderRadius) {
+          continue;
+        }
         Geometry *geometry = new VoxelsGeometry();
         geometries.push_back(geometry);
         Mesh *mesh = new Mesh(geometry, voxelsShader, noiseTexture);
@@ -81,7 +84,7 @@ VoxelsScene::VoxelsScene() {
         mesh->updateTransform();
         mesh->visible = false;
         meshes.push_back(mesh);
-        voxels.push_back(mesh);
+        voxels.push_back({ { x, y, z }, mesh });
       }
     }
   }
@@ -109,15 +112,9 @@ void VoxelsScene::debug() {
 void VoxelsScene::generate() {
   const GLfloat start = (GLfloat) glfwGetTime();
   chunks.setSeed(rand());
-  for (GLint i = 0, z = -renderRadius; z <= renderRadius; z++) {
-    for (GLint y = 0; y < NumSubchunks; y++) {
-      for (GLint x = -renderRadius; x <= renderRadius; x++, i++) {
-        Mesh* mesh = voxels[i];
-        VoxelsGeometry *geometry = (VoxelsGeometry *) mesh->geometry;
-        geometry->generate(&chunks, x, y, z);
-        mesh->visible = geometry->count != 0;
-      }
-    }
+  for (auto v : voxels) {
+    ((VoxelsGeometry *) v.mesh->geometry)->generate(&chunks, v.chunk.x, v.chunk.y, v.chunk.z);
+    v.mesh->visible = v.mesh->geometry->count != 0;
   }
   generationTime = (GLint) (((GLfloat) glfwGetTime() - start) * 1000.0f);
 }

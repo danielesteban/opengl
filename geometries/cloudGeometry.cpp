@@ -38,7 +38,7 @@ CloudGeometry::CloudGeometry() {
   );
 
   const GLfloat width = (GLfloat) cols / 2.5f;
-  const GLfloat height = 1.0f;
+  const GLfloat height = 1.5f;
   const GLfloat length = (GLfloat) rows / 2.5f;
 
   bool **bitmap = new bool*[rows];
