@@ -3,9 +3,9 @@
 const GLint Compositor::samples = 4;
 
 Compositor::Compositor() :
-  colorBufferA(false, samples),
-  colorBufferB(false, samples),
-  renderBuffer(true, samples),
+  colorBufferA(false, false, 0),
+  colorBufferB(false, false, 0),
+  renderBuffer(true, true, samples),
   screen(2.0f, 2.0f)
 {
   blurShader.use();
@@ -23,15 +23,25 @@ void Compositor::initFrame() {
 void Compositor::renderFrame() {
   glDisable(GL_DEPTH_TEST);
 
+  renderBuffer.bindRead();
+  colorBufferA.bindDraw();
+  glBlitFramebuffer(
+    0, 0, renderBuffer.width, renderBuffer.height,
+    0, 0, colorBufferA.width, colorBufferA.height,
+    GL_COLOR_BUFFER_BIT, GL_LINEAR
+  );
+  glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
   blurShader.use();
   glActiveTexture(GL_TEXTURE0);
   blurShader.updateFlag(true);
-  colorBufferA.bind();
-  renderBuffer.bindColorTexture();
-  screen.draw();
-  blurShader.updateFlag(false);
   colorBufferB.bind();
   colorBufferA.bindColorTexture();
+  screen.draw();
+  blurShader.updateFlag(false);
+  colorBufferA.bind();
+  colorBufferB.bindColorTexture();
   screen.draw();
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -41,7 +51,7 @@ void Compositor::renderFrame() {
   glActiveTexture(GL_TEXTURE1);
   renderBuffer.bindDepthTexture();
   glActiveTexture(GL_TEXTURE2);
-  colorBufferB.bindColorTexture();
+  colorBufferA.bindColorTexture();
   screen.draw();
 }
 
