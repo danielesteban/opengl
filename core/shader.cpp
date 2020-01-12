@@ -1,12 +1,15 @@
 #include "shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #ifndef NDEBUG
+#define SHADER_DEBUG
+#endif
+#ifdef SHADER_DEBUG
 #include <stdlib.h>
 #include <stdio.h>
 #endif
 
 Shader::Shader(const char *vertexSource, const char *fragmentSource) {
-  #ifndef NDEBUG
+  #ifdef SHADER_DEBUG
   GLchar infoLog[512];
   #endif
   GLint success;
@@ -16,7 +19,7 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   glCompileShader(vertexShader);
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
   if (!success) {
-    #ifndef NDEBUG
+    #ifdef SHADER_DEBUG
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     fprintf(stderr, "Vertex Shader Error: %s\n", infoLog);
     #endif
@@ -29,7 +32,7 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   glCompileShader(fragmentShader);
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
   if (!success) {
-    #ifndef NDEBUG
+    #ifdef SHADER_DEBUG
     glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
     fprintf(stderr, "Fragment Shader Error: %s\n", infoLog);
     #endif
@@ -43,7 +46,7 @@ Shader::Shader(const char *vertexSource, const char *fragmentSource) {
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &success);
   if (!success) {
-    #ifndef NDEBUG
+    #ifdef SHADER_DEBUG
     glGetProgramInfoLog(program, 512, NULL, infoLog);
     fprintf(stderr, "Shader Program Error: %s\n", infoLog);
     #endif

@@ -1,4 +1,5 @@
 #include "oceanShader.hpp"
+#include "fogShaderChunk.hpp"
 
 const char *OceanShader::vertexSource = 
   "#version 330\n"
@@ -16,13 +17,12 @@ const char *OceanShader::fragmentSource =
   "#version 330\n"
   "in vec4 viewPosition;\n"
   "out vec4 fragColor;\n"
-  "uniform vec3 fogColor;\n"
-  "uniform float fogDensity;\n"
   "const vec3 waterColor = vec3(0.0, 0.2, 0.4);\n"
+  FOG_SHADER_CHUNK
   "void main() {\n"
   "  float fogDepth = length(viewPosition);\n"
   "  float fogFactor = 1.0 - exp(-fogDensity * fogDensity * fogDepth * fogDepth);\n"
-  "  fragColor = vec4(mix(waterColor, fogColor, fogFactor), 0.8);\n"
+  "  fragColor = vec4(fog(waterColor), 0.8);\n"
   "}\n";
 
 OceanShader::OceanShader() : Shader(vertexSource, fragmentSource) {

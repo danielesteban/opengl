@@ -1,4 +1,5 @@
 #include "cubeShader.hpp"
+#include "fogShaderChunk.hpp"
 
 const char *CubeShader::vertexSource = 
   "#version 330\n"
@@ -24,12 +25,9 @@ const char *CubeShader::fragmentSource =
   "in vec4 viewPosition;\n"
   "out vec4 fragColor;\n"
   "uniform vec3 albedo;\n"
-  "uniform vec3 fogColor;\n"
-  "uniform float fogDensity;\n"
+  FOG_SHADER_CHUNK
   "void main() {\n"
-  "  float fogDepth = length(viewPosition);\n"
-  "  float fogFactor = 1.0 - exp(-fogDensity * fogDensity * fogDepth * fogDepth);\n"
-  "  fragColor = vec4(mix(color * albedo, fogColor, fogFactor), 1.0);\n"
+  "  fragColor = vec4(fog(color * albedo), 1.0);\n"
   "}\n";
 
 CubeShader::CubeShader() : Shader(vertexSource, fragmentSource) {

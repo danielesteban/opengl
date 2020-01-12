@@ -1,4 +1,5 @@
 #include "voxelsShader.hpp"
+#include "fogShaderChunk.hpp"
 
 const char *VoxelsShader::vertexSource = 
   "#version 330\n"
@@ -29,12 +30,9 @@ const char *VoxelsShader::fragmentSource =
   "out vec4 fragColor;\n"
   "uniform vec3 albedo;\n"
   "uniform sampler2D colorTexture;\n"
-  "uniform vec3 fogColor;\n"
-  "uniform float fogDensity;\n"
+  FOG_SHADER_CHUNK
   "void main() {\n"
-  "  float fogDepth = length(viewPosition);\n"
-  "  float fogFactor = 1.0 - exp(-fogDensity * fogDensity * fogDepth * fogDepth);\n"
-  "  fragColor = vec4(mix(texture2D(colorTexture, uv).rgb * color * albedo, fogColor, fogFactor), 1.0);\n"
+  "  fragColor = vec4(fog(texture2D(colorTexture, uv).rgb * color * albedo), 1.0);\n"
   "}\n";
 
 VoxelsShader::VoxelsShader() : Shader(vertexSource, fragmentSource) {
