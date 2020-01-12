@@ -59,7 +59,7 @@ void Camera::animate(const Input &input, const GLfloat time, const GLfloat delta
 }
 
 bool Camera::isInFrustum(const glm::vec3 &origin, const GLfloat radius) {
-  for (int i = 0; i < 6; i += 1) {
+  for (int i = 0; i < 6; i++) {
     const GLfloat distance = glm::dot(frustum[i].normal, origin) + frustum[i].constant;
     if (distance < -radius) {
       return false;
