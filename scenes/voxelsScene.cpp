@@ -1,18 +1,22 @@
 #include "voxelsScene.hpp"
 #include "color.hpp"
 
+#include "basicShader.hpp"
 #include "gridShader.hpp"
 #include "oceanShader.hpp"
 #include "voxelsShader.hpp"
 
 #include "noisetexture.hpp"
 
+#include "cloudGeometry.hpp"
 #include "planeGeometry.hpp"
 #include "voxelsGeometry.hpp"
 
 const GLint VoxelsScene::renderRadius = 8;
 
 VoxelsScene::VoxelsScene() {
+  Shader *basicShader = new BasicShader();
+  shaders.push_back(basicShader);
   Shader *gridShader = new GridShader();
   shaders.push_back(gridShader);
   Shader *oceanShader = new OceanShader();
@@ -24,7 +28,7 @@ VoxelsScene::VoxelsScene() {
   glClearColor(background.x, background.y, background.z, 1.0f);
   for (auto *shader : shaders) {
     shader->use();
-    shader->updateFog(background, 0.015f);
+    shader->updateFog(background, shader == basicShader ? 0.005f : 0.015f);
   }
 
   Texture *noiseTexture = new NoiseTexture();
@@ -45,6 +49,21 @@ VoxelsScene::VoxelsScene() {
     mesh->rotation = glm::quat(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
     mesh->updateTransform();
     transparentMeshes.push_back(mesh);
+  }
+  
+  const GLfloat grid = 512.0f;
+  for (GLint z = 0; z < 3; z += 1) {
+    for (GLint x = 0; x < 3; x += 1) {
+      Geometry *geometry = new CloudGeometry();
+      Mesh *mesh = new Mesh(geometry, basicShader);
+      mesh->position = glm::vec3(
+        -grid + ((GLfloat) x * grid),
+        128.0f + (GLfloat) (rand() % 128),
+        -grid + ((GLfloat) z * grid)
+      );
+      mesh->updateTransform();
+      transparentMeshes.push_back(mesh);
+    }
   }
 
   for (GLint z = -renderRadius; z <= renderRadius; z++) {

@@ -1,7 +1,7 @@
 #include "testScene.hpp"
 #include "color.hpp"
 
-#include "cubeShader.hpp"
+#include "basicShader.hpp"
 #include "gridShader.hpp"
 
 #include "boxGeometry.hpp"
@@ -9,8 +9,8 @@
 
 
 TestScene::TestScene() {
-  Shader *cubeShader = new CubeShader();
-  shaders.push_back(cubeShader);
+  Shader *basicShader = new BasicShader();
+  shaders.push_back(basicShader);
   Shader *gridShader = new GridShader();
   shaders.push_back(gridShader);
 
@@ -36,7 +36,7 @@ TestScene::TestScene() {
   geometries.push_back(box);
   for (int z = 0; z < 100; z += 1) {
     for (int x = 0; x < 100; x += 1) {
-      Mesh *cube = new Mesh(box, cubeShader);
+      Mesh *cube = new Mesh(box, basicShader);
       cube->position.x = (GLfloat) (x - 50) * 1.5f;
       cube->position.z = (GLfloat) (z - 50) * 1.5f;
       cubes.push_back(cube);

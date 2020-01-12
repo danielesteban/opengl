@@ -9,10 +9,6 @@ const glm::vec2 VoxelsGeometry::uv[4] = {
   {0.0f, 1.0f},
 };
 
-typedef struct {
-  GLfloat x, y, z,  r, g, b,  u, v;
-} Vertex;
-
 VoxelsGeometry::VoxelsGeometry() {
   const GLfloat side = ChunkSize * 0.5f;
   origin = glm::vec3(side, side, side);

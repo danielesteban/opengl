@@ -8,6 +8,9 @@ class VoxelsGeometry : public Geometry {
     VoxelsGeometry();
     void generate(Chunks *chunks, const GLint cx, const GLint cy, const GLint cz);
   private:
+    typedef struct {
+      GLfloat x, y, z,  r, g, b,  u, v;
+    } Vertex;
     static const Voxel air;
     static const Voxel bedrock;
     static const glm::vec2 uv[4];

@@ -2,9 +2,9 @@
 
 #include "shader.hpp"
 
-class CubeShader : public Shader {
+class BasicShader : public Shader {
   public:
-    CubeShader();
+    BasicShader();
   private:
     static const char *fragmentSource;
     static const char *vertexSource;
