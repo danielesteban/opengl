@@ -88,7 +88,7 @@ void Camera::updateFrustum() {
 void Camera::updateFrustumPlane(const GLuint index, const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat w) {
   frustum[index].normal = glm::vec3(x, y, z);
   const GLfloat inverseNormalLength = 1.0f / glm::length(frustum[index].normal);
-  frustum[index].normal = glm::normalize(frustum[index].normal * inverseNormalLength);
+  frustum[index].normal *= inverseNormalLength;
   frustum[index].constant = w * inverseNormalLength;
 }
 
