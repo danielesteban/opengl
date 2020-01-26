@@ -25,6 +25,7 @@ class Chunks {
   public:
     Chunks();
     const Chunk* get(const GLint x, const GLint z);
+    const GLuint getSeed();
     void setSeed(const GLuint seed);
   private:
     FastNoise noise;

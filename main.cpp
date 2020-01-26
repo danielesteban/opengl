@@ -6,9 +6,8 @@
 #include <time.h>
 #include "camera.hpp"
 #include "compositor.hpp"
+#include "gameplay.hpp"
 #include "input.hpp"
-#include "testScene.hpp"
-#include "voxelsScene.hpp"
 
 bool needsResize = true;
 void onResize(GLFWwindow* window, int width, int height) {
@@ -50,12 +49,6 @@ int main() {
   glfwSwapInterval(1);
   srand((GLuint) time(NULL));
 
-  Input &input = Input::getInstance();
-  glfwSetCursorPosCallback(window, &Input::cursorPosCallback);
-  glfwSetKeyCallback(window, &Input::keyCallback);
-  glfwSetMouseButtonCallback(window, &Input::mouseButtonCallback);
-  glfwSetWindowFocusCallback(window, &Input::windowFocusCallback);
-
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
   io.IniFilename = NULL;
@@ -66,24 +59,16 @@ int main() {
   style.WindowMenuButtonPosition = ImGuiDir_None;
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
+  Input &input = Input::getInstance();
+  glfwSetCursorPosCallback(window, &Input::cursorPosCallback);
+  glfwSetKeyCallback(window, &Input::keyCallback);
+  glfwSetMouseButtonCallback(window, &Input::mouseButtonCallback);
+  glfwSetWindowFocusCallback(window, &Input::windowFocusCallback);
+
   Camera camera;
   Compositor compositor;
-
-  GLint sceneIndex = 0;
-  Scene *scene = (Scene *) new VoxelsScene();
-  auto swapScene = [&scene, &sceneIndex]() {
-    delete scene;
-    sceneIndex = (sceneIndex + 1) % 2;
-    switch (sceneIndex) {
-      case 0:
-        scene = (Scene *) new VoxelsScene();
-        break;
-      case 1:
-        scene = (Scene *) new TestScene();
-        break;
-    }
-  };
-
+  Scene *scene = new Gameplay();
+  
   struct {
     GLuint acc, lastCount;
     GLfloat lastTick;
@@ -111,9 +96,6 @@ int main() {
 
     camera.animate(input, time, delta);
     scene->animate(camera, input, time, delta);
-    if (input.mouse.secondaryDown) {
-      swapScene();
-    }
     input.mouse.movement = glm::vec2(0, 0);
     input.mouse.primaryDown = false;
     input.mouse.secondaryDown = false;

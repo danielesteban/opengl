@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <imgui.h>
 
 class Input {
   public:
@@ -100,7 +101,7 @@ class Input {
           default:
             break;
         }
-      } else if (hasPressed) {
+      } else if (hasPressed && !ImGui::GetIO().WantCaptureMouse) {
         lockInput(window);
       }
     }
@@ -120,11 +121,13 @@ class Input {
 
     void lockInput(GLFWwindow *window) {
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+      ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
       isLocked = true;
     }
 
     void unlockInput(GLFWwindow *window) {
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+      ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
       isLocked = false;
       mouse.primary = false;
       mouse.primaryDown = false;

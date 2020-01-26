@@ -1,4 +1,4 @@
-#include "voxelsScene.hpp"
+#include "gameplay.hpp"
 #include "color.hpp"
 
 #include "basicShader.hpp"
@@ -12,9 +12,9 @@
 #include "planeGeometry.hpp"
 #include "voxelsGeometry.hpp"
 
-const GLint VoxelsScene::renderRadius = 8;
+const GLint Gameplay::renderRadius = 8;
 
-VoxelsScene::VoxelsScene() {
+Gameplay::Gameplay() {
   Shader *basicShader = new BasicShader();
   shaders.push_back(basicShader);
   Shader *gridShader = new GridShader();
@@ -92,24 +92,30 @@ VoxelsScene::VoxelsScene() {
   generate();
 }
 
-void VoxelsScene::animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {
+void Gameplay::animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta) {
   if (camera.position.y < 5.0f) {
     camera.position.y = 5.0f;
     camera.updateView();
   }
-  if (input.mouse.primaryDown) {
-    generate();
-  }
 }
 
-void VoxelsScene::debug() {
+void Gameplay::debug() {
   ImGui::Spacing();
   ImGui::Separator();
   ImGui::Spacing();
-  ImGui::Text("%d meshed in %dms", voxels.size() / NumSubchunks, generationTime);
+  
+  ImGui::Text("World seed: %d", chunks.getSeed());
+  ImGui::Text("%d chunks in %dms", voxels.size() / NumSubchunks, generationTime);
+
+  ImGui::Spacing();
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50);
+  if (ImGui::Button("regenerate")) {
+    generate();
+  }
+  ImGui::Spacing();
 }
 
-void VoxelsScene::generate() {
+void Gameplay::generate() {
   const GLfloat start = (GLfloat) glfwGetTime();
   chunks.setSeed(rand());
   for (auto v : voxels) {

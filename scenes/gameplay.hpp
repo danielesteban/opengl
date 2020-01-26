@@ -3,9 +3,9 @@
 #include "scene.hpp"
 #include "chunks.hpp"
 
-class VoxelsScene : public Scene {
+class Gameplay : public Scene {
   public:
-    VoxelsScene();
+    Gameplay();
     void animate(Camera &camera, const Input &input, const GLfloat time, const GLfloat delta);
     void debug();
   private:
