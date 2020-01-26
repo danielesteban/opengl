@@ -52,7 +52,7 @@ void Camera::animate(const Input &input, const GLfloat time, const GLfloat delta
       movement -= worldUp;
     }
     if (glm::length(movement) > 0) {
-      position += glm::normalize(movement) * delta * speed;
+      position += glm::normalize(movement) * delta * speed * (input.keyboard.downwards ? 2.0f : 1.0f);
       updateView();
     }
   }
