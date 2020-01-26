@@ -2,15 +2,23 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-Mesh::Mesh(Geometry *geometry, Shader *shader, Texture *texture) :
+Mesh::Mesh(Geometry *geometry, Shader *shader, Texture *texture, glm::vec3 position, glm::quat rotation, glm::vec3 scale) :
   albedo(1.0f, 1.0f, 1.0f),
   geometry(geometry),
   shader(shader),
   texture(texture),
-  scale(1.0f, 1.0f, 1.0f),
+  position(position),
+  rotation(rotation),
+  scale(scale),
   visible(true)
 {
   updateTransform();
+}
+
+Mesh::Mesh(Geometry *geometry, Shader *shader, glm::vec3 position, glm::quat rotation, glm::vec3 scale) :
+  Mesh(geometry, shader, nullptr, position, rotation, scale)
+{
+
 }
 
 void Mesh::render() {

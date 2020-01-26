@@ -63,6 +63,21 @@ Chunk* Chunks::generate(const GLint cx, const GLint cz) {
     }
   }
 
+   for (GLint i = 0, z = 0; z < ChunkSize; z++) {
+    for (GLint x = 0; x < ChunkSize; x++, i++) {
+      for (GLint y = ChunkSize * NumSubchunks - 1; y >= 0; y--) {
+        if (
+          chunk->voxels[
+            (z * ChunkSize * ChunkSize * NumSubchunks) + (y * ChunkSize) + x
+          ].type != 0
+        ) {
+          chunk->heightmap[i] = (GLubyte) y + 1;
+          break;
+        }
+      }
+    }
+  }
+
   return chunk;
 }
 

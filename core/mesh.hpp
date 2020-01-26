@@ -8,7 +8,21 @@
 
 class Mesh {
   public:
-    Mesh(Geometry *geometry, Shader *shader, Texture *texture = nullptr);
+    Mesh(
+      Geometry *geometry,
+      Shader *shader,
+      Texture *texture = nullptr,
+      glm::vec3 position = glm::vec3(),
+      glm::quat rotation = glm::quat(),
+      glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
+    );
+    Mesh(
+      Geometry *geometry,
+      Shader *shader,
+      glm::vec3 position = glm::vec3(),
+      glm::quat rotation = glm::quat(),
+      glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
+    );
     Geometry *geometry;
     Shader *shader;
     Texture *texture;

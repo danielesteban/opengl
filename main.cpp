@@ -56,6 +56,9 @@ int main() {
   ImGui_ImplOpenGL3_Init("#version 130");
   ImGuiStyle& style = ImGui::GetStyle();
   style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
+  style.Colors[ImGuiCol_Button] = ImVec4(0.14f, 0.29f, 0.08f, 1.00f);
+  style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.28f, 0.61f, 0.17f, 1.00f);
+  style.Colors[ImGuiCol_ButtonActive] = style.Colors[ImGuiCol_ButtonHovered];
   style.WindowMenuButtonPosition = ImGuiDir_None;
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
@@ -67,7 +70,7 @@ int main() {
 
   Camera camera;
   Compositor compositor;
-  Scene *scene = new Gameplay();
+  Scene *scene = new Gameplay(camera);
   
   struct {
     GLuint acc, lastCount;
